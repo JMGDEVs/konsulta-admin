@@ -1,0 +1,84 @@
+# Flutter & Dart
+.dart_tool/
+.packages
+.buildlog/
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+
+# Build outputs
+build/
+coverage/
+*.lock
+
+# iOS
+ios/Pods/
+ios/DerivedData/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+ios/Flutter/App.framework
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Runner.xcworkspace/
+ios/Runner.xcodeproj/xcuserdata/
+ios/Runner.xcodeproj/project.xcworkspace/
+ios/.symlinks/
+
+# macOS
+macos/Pods/
+macos/Flutter/ephemeral/
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Runner.xcworkspace/
+macos/Runner.xcodeproj/xcuserdata/
+
+# Android
+android/.gradle/
+android/app/build/
+android/local.properties
+android/.idea/
+android/captures/
+
+# Web
+web/.dart_tool/
+web/.firebase/
+
+# Linux generated files
+linux/flutter/generated_*
+linux/flutter/ephemeral/
+
+# Windows generated files  
+windows/flutter/generated_*
+windows/flutter/ephemeral/
+
+# VS Code / IntelliJ / Xcode user data
+# .vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+*.xcuserstate
+*.xcuserdata
+*.xcworkspace
+
+# Others
+*.log
+*.tmp
+*.swp
+.DS_Store
+._*
+
+# Windows reserved device names
+nul
+con
+prn
+aux
+com1
+com2
+lpt1
+lpt2
+ios/Runner.xcodeproj/project.pbxproj
+ios/Flutter/Debug.xcconfig
+ios/Flutter/Release.xcconfig
+macos/Flutter/Flutter-Debug.xcconfig
+macos/Flutter/Flutter-Release.xcconfig
