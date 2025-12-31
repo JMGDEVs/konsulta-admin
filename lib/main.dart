@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:konsulta_admin/app_state.dart';
+import 'package:konsulta_admin/core/features/router/app_router.dart';
+import 'package:url_strategy/url_strategy.dart';
 
-void main() {
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
-    );
-  }
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppRouter.checkAuthState();
+  setPathUrlStrategy();
+  
+  runApp(
+    AppState()
+  );
 }

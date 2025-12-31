@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Konsulta-admin (Chrome Web Debug)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "deviceId": "chrome",
+      "args": [
+        "--web-port",
+        "8000"
+      ]
+    },
+    {
+      "name": "Konsulta-admin (Chrome Web Profile)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "deviceId": "chrome",
+      "args": [
+        "--web-port",
+        "8000"
+      ]
+    },
+    {
+      "name": "Konsulta-admin (Chrome Web Release)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "deviceId": "chrome",
+      "args": [
+        "--web-port",
+        "8000"
+      ]
+    }
+  ]
+}
