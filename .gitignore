@@ -82,3 +82,5 @@ ios/Flutter/Debug.xcconfig
 ios/Flutter/Release.xcconfig
 macos/Flutter/Flutter-Debug.xcconfig
 macos/Flutter/Flutter-Release.xcconfig
+ios/Podfile
+macos/Podfile

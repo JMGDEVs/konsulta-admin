@@ -30,13 +30,13 @@ class AppRouter {
 
   /// Main app router with authentication-aware redirect logic.
   static final GoRouter router = GoRouter(
-    initialLocation: RoutePaths.login,
+    initialLocation: RoutePaths.dashboardState,
     routes: RoutePages().routes,
     refreshListenable: authStateNotifier,
     redirect: (context, state) async {
       final isLoggedIn = authStateNotifier.value;
 
-      return RoutePaths.login;
+      return RoutePaths.dashboardState;
     }
   );
 }

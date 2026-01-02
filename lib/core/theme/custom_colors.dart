@@ -17,6 +17,7 @@ class AppColors {
   static const Color black = Color.fromARGB(255, 0, 0, 0);
   static const Color white = Color(0xFFFFFFFF);
   static const Color backgroundColorGrey = Color(0xFFF6F6F6);
+  static const Color greybackgroundcolor = Color(0xFFF5F5F5);
   static const Color switchGreen = Color(0xFF21DA00);
   static const Color hoverColor = Color(0xFFF1F1F1);
   static const Color darkgreyColor = Color(0xFF1A1A1A);
