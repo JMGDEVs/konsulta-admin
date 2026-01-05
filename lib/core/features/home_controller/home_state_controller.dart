@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:konsulta_admin/core/features/home_controller/hover_item.dart';
 import 'package:konsulta_admin/core/features/home_controller/pages.dart';
+import 'package:konsulta_admin/core/features/router/app_router.dart';
 import 'package:konsulta_admin/core/theme/custom_colors.dart';
 
 class HomeStateController extends StatefulWidget {
@@ -41,17 +43,16 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     
     return Scaffold(
       body: Row(
         children: [
-          Container(
+          SizedBox(
             height: double.infinity,
             width: 300,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -64,9 +65,19 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
                     ),
                   ),
                   SizedBox(height: 15,),
+                  // ignore: deprecated_member_use
                   Divider(color: AppColors.black.withOpacity(0.1),),
                   SizedBox(height: 20,),
-                  ..._buildMenuItems()
+                  ..._buildMenuItems(),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () async {
+                      FlutterSecureStorage flutter = FlutterSecureStorage();
+                      await flutter.delete(key: 'token');
+                      AppRouter.checkAuthState();
+                    },
+                    child: Text('Log Out'),
+                  )
                 ],
               ),
             ),
@@ -112,7 +123,6 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
     for (int i = 0; i < menuItems.length; i++) {
       final hasChildren = menuItems[i]['children'] != null && 
                          (menuItems[i]['children'] as List).isNotEmpty;
-      final childrenCount = hasChildren ? (menuItems[i]['children'] as List).length : 0;
       
       // Highlight parent if:
       // 1. It has no children and is selected, OR

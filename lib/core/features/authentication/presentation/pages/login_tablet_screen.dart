@@ -4,44 +4,43 @@ import 'package:konsulta_admin/core/widgets/custom_buttons.dart';
 import 'package:konsulta_admin/core/widgets/custom_fields.dart';
 import 'package:konsulta_admin/core/widgets/path_images.dart';
 
-class LoginMobileScreen extends StatefulWidget {
-  const LoginMobileScreen({super.key});
+class LoginTabletScreen extends StatefulWidget {
+  const LoginTabletScreen({super.key});
 
   @override
-  State<LoginMobileScreen> createState() => _LoginMobileScreennState();
+  State<LoginTabletScreen> createState() => _LoginTabletScreenState();
 }
 
-class _LoginMobileScreennState extends State<LoginMobileScreen> {
+class _LoginTabletScreenState extends State<LoginTabletScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Column(
-      spacing: 68,
-      children: [
-        Expanded(
+    return Padding(
+      padding: EdgeInsetsGeometry.all(20),
+      child: Expanded(
+        child: Center(
           child: Container(
             width: 500,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
+                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.06),
                   blurRadius: 100,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(40),
-                child: contentCard(colorScheme)
-              )
-            ),
+            child: SingleChildScrollView(child: Padding(
+              padding: const EdgeInsets.all(40),
+              child: contentCard(colorScheme),
+            )),
           ),
-        )
-      ]
+        ),
+      ),
     );
   }
 
@@ -50,10 +49,9 @@ class _LoginMobileScreennState extends State<LoginMobileScreen> {
     final space20 = SizedBox(height: 20,);
     final space10 = SizedBox(height: 10,);
     final space40 = SizedBox(height: 40,);
-    final space80 = SizedBox(height: 80,);
     return Column(
       children: [
-        Images().imageLogo(sizeHeight: 100, sizeWidth: 100),
+        Images().imageLogo(sizeHeight: 80, sizeWidth: 80),
         space20,
         Text(
           'Welcome Admin!',
@@ -70,7 +68,7 @@ class _LoginMobileScreennState extends State<LoginMobileScreen> {
             color: AppColors.grayText
           ),
         ),
-        space80,
+        space40,
         CustomTextFormField(
           label: 'Email Address',
           controller: TextEditingController(),

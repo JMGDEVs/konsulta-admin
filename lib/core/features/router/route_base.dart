@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:konsulta_admin/core/features/authentication/login_layout.dart';
+import 'package:konsulta_admin/core/features/authentication/presentation/pages/login_layout.dart';
 import 'package:konsulta_admin/core/features/home_controller/home_state_controller.dart';
 import 'package:konsulta_admin/core/features/router/route_paths.dart';
 
 class RoutePages {
   List<RouteBase> get routes => [
         GoRoute(
-          name: '/login',
+          name: '/',
           path: RoutePaths.login,
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
@@ -22,8 +22,8 @@ class RoutePages {
           ),
         ),
         GoRoute(
-          name: '/',
-          path: RoutePaths.dashboardState,
+          name: '/dashboard',
+          path: RoutePaths.dashboard,
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const HomeStateController(),

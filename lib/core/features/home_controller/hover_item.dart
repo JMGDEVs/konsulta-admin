@@ -26,7 +26,6 @@ class _HoverMenuItemState extends State<HoverMenuItem> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showBorder = widget.selected;
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovering = true),
