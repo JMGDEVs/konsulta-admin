@@ -24,7 +24,11 @@ List<Widget> pages = [
 ];
 
 final List<Map<String, dynamic>> menuItems = [
-  {'title': 'Dashboard', 'icon': Symbols.space_dashboard, 'children': []},
+  {
+    'title': 'Dashboard',
+    'icon': Symbols.space_dashboard_rounded,
+    'children': [],
+  },
   {
     'title': 'Onboarding Queue',
     'icon': Symbols.article_person, // or similar icon

@@ -104,7 +104,7 @@ class _HomeStateControllerState extends State<HomeStateController>
                   ),
                 ),
               ),
-              backgroundColor: Colors.black,
+              backgroundColor: Colors.grey.shade100,
               body: IndexedStack(index: selectedIndex, children: pages),
             ),
           ),
