@@ -2,42 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:konsulta_admin/core/features/authentication/presentation/pages/login_layout.dart';
 import 'package:konsulta_admin/core/features/home_controller/home_state_controller.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/application_review_screen.dart';
 import 'package:konsulta_admin/core/features/router/route_paths.dart';
 
 class RoutePages {
   List<RouteBase> get routes => [
-        GoRoute(
-          name: '/',
-          path: RoutePaths.login,
-          pageBuilder: (context, state) => CustomTransitionPage(
-            key: state.pageKey,
-            child: const LoginLayout(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-          ),
-        ),
-        GoRoute(
-          name: '/dashboard',
-          path: RoutePaths.dashboard,
-          pageBuilder: (context, state) => CustomTransitionPage(
-            key: state.pageKey,
-            child: const HomeStateController(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-          ),
-        ),
-        
-      ];
+    GoRoute(
+      name: '/',
+      path: RoutePaths.login,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const LoginLayout(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    ),
+    GoRoute(
+      name: '/dashboard',
+      path: RoutePaths.dashboard,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const HomeStateController(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    ),
+    GoRoute(
+      name: '/application-review',
+      path: RoutePaths.applicationReview,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const ApplicationReviewScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    ),
+  ];
 }
 
 class CustomTransitionPage<T> extends Page<T> {
@@ -58,7 +61,8 @@ class CustomTransitionPage<T> extends Page<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     Widget child,
-  )? transitionsBuilder;
+  )?
+  transitionsBuilder;
   final Duration transitionDuration;
   final Duration reverseTransitionDuration;
 
@@ -69,7 +73,8 @@ class CustomTransitionPage<T> extends Page<T> {
       pageBuilder: (context, animation, _) => child,
       transitionDuration: transitionDuration,
       reverseTransitionDuration: reverseTransitionDuration,
-      transitionsBuilder: transitionsBuilder ??
+      transitionsBuilder:
+          transitionsBuilder ??
           (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },

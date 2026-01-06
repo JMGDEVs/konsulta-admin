@@ -19,6 +19,18 @@ import 'package:konsulta_admin/core/features/authentication/domain/use_case/auth
     as _i218;
 import 'package:konsulta_admin/core/features/authentication/presentation/bloc/auth_bloc.dart'
     as _i988;
+import 'package:konsulta_admin/core/features/onboarding_queue/data/datasources/onboarding_queue_service.dart'
+    as _i350;
+import 'package:konsulta_admin/core/features/onboarding_queue/data/repositories/onboarding_queue_repository_impl.dart'
+    as _i482;
+import 'package:konsulta_admin/core/features/onboarding_queue/domain/repositories/onboarding_queue_repository.dart'
+    as _i209;
+import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_pending_applicants_usecase.dart'
+    as _i844;
+import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/start_review_usecase.dart'
+    as _i556;
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart'
+    as _i908;
 import 'package:konsulta_admin/core/service/api_service/konsulta_admin_api.dart'
     as _i999;
 import 'package:konsulta_admin/core/service/config/config.dart' as _i667;
@@ -36,14 +48,38 @@ extension GetItInjectableX on _i174.GetIt {
       () => configModule.configDevInfinity,
       instanceName: 'devConfig',
     );
+    gh.lazySingleton<_i350.OnboardingQueueService>(
+      () => _i350.OnboardingQueueService(
+        gh<_i950.Config>(instanceName: 'devConfig'),
+      ),
+    );
     gh.lazySingleton<_i999.KonsultaProApi>(
       () => _i999.KonsultaProApi(gh<_i950.Config>(instanceName: 'devConfig')),
+    );
+    gh.lazySingleton<_i209.OnboardingQueueRepository>(
+      () => _i482.OnboardingQueueRepositoryImpl(
+        gh<_i350.OnboardingQueueService>(),
+      ),
     );
     gh.lazySingleton<_i487.AuthenticationRepo>(
       () => _i349.AuthenticationImpl(gh<_i999.KonsultaProApi>()),
     );
     gh.factory<_i218.AuthUseCase>(
       () => _i218.AuthUseCase(gh<_i487.AuthenticationRepo>()),
+    );
+    gh.lazySingleton<_i844.GetPendingApplicantsUseCase>(
+      () => _i844.GetPendingApplicantsUseCase(
+        gh<_i209.OnboardingQueueRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i556.StartReviewUseCase>(
+      () => _i556.StartReviewUseCase(gh<_i209.OnboardingQueueRepository>()),
+    );
+    gh.factory<_i908.OnboardingQueueBloc>(
+      () => _i908.OnboardingQueueBloc(
+        gh<_i844.GetPendingApplicantsUseCase>(),
+        gh<_i556.StartReviewUseCase>(),
+      ),
     );
     gh.lazySingleton<_i988.AuthBloc>(
       () => _i988.AuthBloc(gh<_i218.AuthUseCase>()),

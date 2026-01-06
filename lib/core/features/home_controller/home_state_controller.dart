@@ -12,14 +12,14 @@ class HomeStateController extends StatefulWidget {
   State<HomeStateController> createState() => _HomeStateControllerState();
 }
 
-class _HomeStateControllerState extends State<HomeStateController>with TickerProviderStateMixin {
+class _HomeStateControllerState extends State<HomeStateController>
+    with TickerProviderStateMixin {
   int selectedIndex = 0;
   int? expandedMenuIndex;
   int? selectedParentIndex = 0;
   int? selectedChildIndex;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
-
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    
+
     return Scaffold(
       body: Row(
         children: [
@@ -52,22 +52,21 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
             height: double.infinity,
             width: 300,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 20.0,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: 20,),
-                  Image.asset('assets/images/logo_app_name.png', width: 250, ),
-                  SizedBox(height: 10,),
-                  Text(
-                    'Admin Center',
-                    style: textTheme.titleLarge?.copyWith(
-                    ),
-                  ),
-                  SizedBox(height: 15,),
+                  SizedBox(height: 20),
+                  Image.asset('assets/images/logo_app_name.png', width: 250),
+                  SizedBox(height: 10),
+                  Text('Admin Center', style: textTheme.titleLarge?.copyWith()),
+                  SizedBox(height: 15),
                   // ignore: deprecated_member_use
-                  Divider(color: AppColors.black.withOpacity(0.1),),
-                  SizedBox(height: 20,),
+                  Divider(color: AppColors.black.withOpacity(0.1)),
+                  SizedBox(height: 20),
                   ..._buildMenuItems(),
                   Spacer(),
                   TextButton(
@@ -77,7 +76,7 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
                       AppRouter.checkAuthState();
                     },
                     child: Text('Log Out'),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -94,26 +93,23 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
                   child: Row(
                     children: [
                       Text(
-                        'Dashboard',
+                        _getPageTitle(),
                         style: textTheme.titleLarge?.copyWith(
                           color: Colors.white,
                         ),
                       ),
                       Spacer(),
-                      Icon(Icons.people, color: Colors.white,),
+                      Icon(Icons.people, color: Colors.white),
                     ],
                   ),
                 ),
               ),
               backgroundColor: Colors.black,
-              body: IndexedStack(
-                index: selectedIndex,
-                children: pages,
-              ),
+              body: IndexedStack(index: selectedIndex, children: pages),
             ),
           ),
         ],
-      )
+      ),
     );
   }
 
@@ -121,15 +117,16 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
     List<Widget> items = [];
 
     for (int i = 0; i < menuItems.length; i++) {
-      final hasChildren = menuItems[i]['children'] != null && 
-                         (menuItems[i]['children'] as List).isNotEmpty;
-      
+      final hasChildren =
+          menuItems[i]['children'] != null &&
+          (menuItems[i]['children'] as List).isNotEmpty;
+
       // Highlight parent if:
       // 1. It has no children and is selected, OR
-      // 2. It has exactly one child and is selected, OR  
+      // 2. It has exactly one child and is selected, OR
       // 3. It has multiple children and either parent or any child is selected
       bool isParentSelected = selectedParentIndex == i;
-      
+
       // Main menu item
       items.add(
         HoverMenuItem(
@@ -137,7 +134,7 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
           text: menuItems[i]['title'],
           selected: isParentSelected,
           icon: Icon(
-            menuItems[i]['icon'], 
+            menuItems[i]['icon'],
             color: isParentSelected ? AppColors.primary : Colors.black,
             size: 28,
             weight: 600,
@@ -145,7 +142,7 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
           onTap: () => _onMenuTap(i),
         ),
       );
-      
+
       // Expandable submenu
       if (expandedMenuIndex == i && hasChildren) {
         items.add(
@@ -162,46 +159,63 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
                     .asMap()
                     .entries
                     .map((entry) {
-                  int childIndex = entry.key;
-                  String childTitle = entry.value;
-                  bool isChildSelected = selectedParentIndex == i && selectedChildIndex == childIndex;
-                  
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    onTap: () => _onSubMenuTap(i, childIndex),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.only(left: 54, right: 15, top: 15, bottom: 15),
-                      decoration: BoxDecoration(
-                        color: isChildSelected ? AppColors.backgroundColorGrey : Colors.transparent,
+                      int childIndex = entry.key;
+                      String childTitle = entry.value;
+                      bool isChildSelected =
+                          selectedParentIndex == i &&
+                          selectedChildIndex == childIndex;
+
+                      return InkWell(
                         borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        childTitle,
-                        style: TextStyle(
-                          color: isChildSelected ? AppColors.primary : Colors.black,
-                          fontSize: 14,
-                          fontWeight: isChildSelected ? FontWeight.w600 : FontWeight.normal,
+                        onTap: () => _onSubMenuTap(i, childIndex),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.only(
+                            left: 54,
+                            right: 15,
+                            top: 15,
+                            bottom: 15,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isChildSelected
+                                ? AppColors.backgroundColorGrey
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            childTitle,
+                            style: TextStyle(
+                              color: isChildSelected
+                                  ? AppColors.primary
+                                  : Colors.black,
+                              fontSize: 14,
+                              fontWeight: isChildSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+                      );
+                    })
+                    .toList(),
               ),
             ),
           ),
         );
       }
     }
-    
+
     return items;
   }
 
   void _onMenuTap(int index) {
-    final hasChildren = menuItems[index]['children'] != null && 
-                       (menuItems[index]['children'] as List).isNotEmpty;
-    final childrenCount = hasChildren ? (menuItems[index]['children'] as List).length : 0;
-    
+    final hasChildren =
+        menuItems[index]['children'] != null &&
+        (menuItems[index]['children'] as List).isNotEmpty;
+    final childrenCount = hasChildren
+        ? (menuItems[index]['children'] as List).length
+        : 0;
+
     setState(() {
       if (hasChildren) {
         if (childrenCount == 1) {
@@ -271,15 +285,34 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
       // Calculate the page index based on parent and child
       selectedIndex = _getPageIndex(parentIndex, childIndex);
     });
-    print('Selected: ${menuItems[parentIndex]['title']} -> ${menuItems[parentIndex]['children'][childIndex]}');
+    print(
+      'Selected: ${menuItems[parentIndex]['title']} -> ${menuItems[parentIndex]['children'][childIndex]}',
+    );
+  }
+
+  String _getPageTitle() {
+    if (selectedParentIndex != null) {
+      String title = menuItems[selectedParentIndex!]['title'];
+      if (selectedChildIndex != null) {
+        // You might want to show "Parent > Child" or just "Child"
+        // Based on screenshot "Onboarding Queue" is in sidebar, "Pending Applications" is the screen title.
+        // The AppBar in the screenshot (if visible) usually shows the active section.
+        // Let's return the Child title if present.
+        String childTitle =
+            menuItems[selectedParentIndex!]['children'][selectedChildIndex!];
+        return childTitle;
+      }
+      return title;
+    }
+    return 'Dashboard';
   }
 
   int _getPageIndex(int parentIndex, int childIndex) {
     // This method maps parent/child combinations to specific page indices
     // You'll need to adjust this based on how your pages are organized
-    
+
     int pageIndex = 0;
-    
+
     // Calculate cumulative index based on menu structure
     for (int i = 0; i < parentIndex; i++) {
       // Add 1 for the parent page itself
@@ -289,13 +322,13 @@ class _HomeStateControllerState extends State<HomeStateController>with TickerPro
         pageIndex += (menuItems[i]['children'] as List).length;
       }
     }
-    
+
     // Add 1 for the current parent page
     pageIndex += 1;
-    
+
     // Add the child index
     pageIndex += childIndex;
-    
+
     return pageIndex;
   }
 }
