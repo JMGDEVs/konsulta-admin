@@ -24,6 +24,9 @@ class OnboardingQueueState {
 
   final bool isReviewLoading;
 
+  // Selected applicant for detail view
+  final ApplicantModel? selectedApplicantForReview;
+
   OnboardingQueueState({
     this.isLoading = false,
     this.applicants = const [],
@@ -40,6 +43,7 @@ class OnboardingQueueState {
     this.underReviewSortAscending = false,
     this.underReviewSortColumnIndex = 7,
     this.isReviewLoading = false,
+    this.selectedApplicantForReview,
   });
 
   OnboardingQueueState copyWith({
@@ -58,6 +62,7 @@ class OnboardingQueueState {
     bool? underReviewSortAscending,
     int? underReviewSortColumnIndex,
     bool? isReviewLoading,
+    ApplicantModel? selectedApplicantForReview,
   }) {
     return OnboardingQueueState(
       isLoading: isLoading ?? this.isLoading,
@@ -75,6 +80,7 @@ class OnboardingQueueState {
       underReviewSortAscending: underReviewSortAscending ?? this.underReviewSortAscending,
       underReviewSortColumnIndex: underReviewSortColumnIndex ?? this.underReviewSortColumnIndex,
       isReviewLoading: isReviewLoading ?? this.isReviewLoading,
+      selectedApplicantForReview: selectedApplicantForReview ?? this.selectedApplicantForReview,
     );
   }
 }

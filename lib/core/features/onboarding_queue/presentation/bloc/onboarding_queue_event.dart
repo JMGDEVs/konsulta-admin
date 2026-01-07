@@ -59,3 +59,11 @@ class SortApplicantsEvent extends OnboardingQueueEvent {
 
   SortApplicantsEvent(this.ascending, this.columnIndex);
 }
+
+class SelectApplicantForReviewEvent extends OnboardingQueueEvent {
+  final ApplicantModel applicant;
+
+  SelectApplicantForReviewEvent(this.applicant);
+}
+
+class ClearSelectedApplicantEvent extends OnboardingQueueEvent {}

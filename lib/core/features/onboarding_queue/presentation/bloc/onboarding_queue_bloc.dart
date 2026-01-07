@@ -28,6 +28,8 @@ class OnboardingQueueBloc
     on<UpdateSearchEvent>(_onUpdateSearch);
     on<UpdateProfessionalTagEvent>(_onUpdateProfessionalTag);
     on<SortApplicantsEvent>(_onSortApplicants);
+    on<SelectApplicantForReviewEvent>(_onSelectApplicantForReview);
+    on<ClearSelectedApplicantEvent>(_onClearSelectedApplicant);
   }
 
   void _onSetActiveScreen(
@@ -252,5 +254,37 @@ class OnboardingQueueBloc
         ),
       );
     }
+  }
+
+  void _onSelectApplicantForReview(
+    SelectApplicantForReviewEvent event,
+    Emitter<OnboardingQueueState> emit,
+  ) {
+    emit(state.copyWith(selectedApplicantForReview: event.applicant));
+  }
+
+  void _onClearSelectedApplicant(
+    ClearSelectedApplicantEvent event,
+    Emitter<OnboardingQueueState> emit,
+  ) {
+    // To clear nullable field, create new state with null explicitly
+    emit(OnboardingQueueState(
+      isLoading: state.isLoading,
+      applicants: state.applicants,
+      isUnderReviewLoading: state.isUnderReviewLoading,
+      underReviewApplicants: state.underReviewApplicants,
+      errorMessage: state.errorMessage,
+      activeScreen: state.activeScreen,
+      pendingSearchQuery: state.pendingSearchQuery,
+      pendingProfessionId: state.pendingProfessionId,
+      pendingSortAscending: state.pendingSortAscending,
+      pendingSortColumnIndex: state.pendingSortColumnIndex,
+      underReviewSearchQuery: state.underReviewSearchQuery,
+      underReviewProfessionId: state.underReviewProfessionId,
+      underReviewSortAscending: state.underReviewSortAscending,
+      underReviewSortColumnIndex: state.underReviewSortColumnIndex,
+      isReviewLoading: state.isReviewLoading,
+      selectedApplicantForReview: null, // Explicitly set to null
+    ));
   }
 }

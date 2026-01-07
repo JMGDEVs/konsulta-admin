@@ -1,12 +1,10 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applicant_model.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart';
-import 'package:konsulta_admin/core/features/router/route_paths.dart';
 import 'package:konsulta_admin/core/service/dependency_injection/injection.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -61,30 +59,42 @@ class _UnderReviewViewState extends State<UnderReviewView> {
           color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Under Review',
-                  style: GoogleFonts.inter(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Review the uploaded IDs to approve or reject applications.',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                _buildFilters(context),
-                const SizedBox(height: 24),
-                Expanded(child: _buildTable(context)),
-              ],
+            child: BlocBuilder<OnboardingQueueBloc, OnboardingQueueState>(
+              builder: (context, state) {
+                // Check if an applicant is selected for review
+                if (state.selectedApplicantForReview != null) {
+                  return _ApplicantDetailsView(
+                    applicant: state.selectedApplicantForReview!,
+                  );
+                }
+
+                // Otherwise, show the table view
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Under Review',
+                      style: GoogleFonts.inter(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Review the uploaded IDs to approve or reject applications.',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildFilters(context),
+                    const SizedBox(height: 24),
+                    Expanded(child: _buildTable(context)),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -564,9 +574,387 @@ class _UnderReviewViewState extends State<UnderReviewView> {
   void _handleReview(BuildContext context, ApplicantModel applicant) {
     if (applicant.id == null) return;
 
-    // Navigate directly to application review screen
-    if (context.mounted) {
-      context.push(RoutePaths.applicationReview);
-    }
+    // Dispatch event to select applicant for review
+    context.read<OnboardingQueueBloc>().add(
+      SelectApplicantForReviewEvent(applicant),
+    );
+  }
+}
+
+// Applicant Details View Widget (Placeholder)
+class _ApplicantDetailsView extends StatelessWidget {
+  final ApplicantModel applicant;
+
+  const _ApplicantDetailsView({required this.applicant});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Top bar with back button and reject button
+        Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                context.read<OnboardingQueueBloc>().add(
+                  ClearSelectedApplicantEvent(),
+                );
+              },
+              tooltip: 'Back to list',
+            ),
+            const Spacer(),
+            ElevatedButton.icon(
+              onPressed: () => _handleReject(context),
+              icon: const Icon(Icons.close, size: 18),
+              label: const Text('Reject Applicant'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+
+        // Applicant Details Title
+        Text(
+          'Applicant Details',
+          style: GoogleFonts.inter(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'December 4, 2025 at 7:49 am',
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 32),
+
+        // Applicant Information (Placeholder)
+        Expanded(
+          child: SingleChildScrollView(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left column - Personal Information
+                Expanded(
+                  flex: 1,
+                  child: Card(
+                    elevation: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildInfoRow('Name', applicant.fullName),
+                          const SizedBox(height: 16),
+                          _buildInfoRow('Profession', applicant.professionalTag ?? '---'),
+                          const SizedBox(height: 16),
+                          _buildInfoRow('Phone number', applicant.phone ?? '---'),
+                          const SizedBox(height: 16),
+                          _buildInfoRow('Email address', applicant.email ?? '---'),
+                          const SizedBox(height: 16),
+                          _buildInfoRow('Gender', applicant.gender ?? '---'),
+                          const SizedBox(height: 16),
+                          _buildInfoRow('Birthdate', applicant.birthDate ?? 'MM/DD/YYYY'),
+                          const SizedBox(height: 16),
+                          _buildInfoRow('Status', applicant.verificationStatus ?? 'Pending'),
+                          const SizedBox(height: 16),
+                          _buildInfoRow('Registered date', applicant.createdAt ?? 'MM/DD/YYYY'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 24),
+
+                // Right column - Document Placeholders
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      // Government ID Section
+                      Card(
+                        elevation: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Government ID',
+                                style: GoogleFonts.inter(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Official Passport Document',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Container(
+                                height: 100,
+                                color: Colors.grey[200],
+                                child: Center(
+                                  child: Text(
+                                    'Document Preview Placeholder',
+                                    style: GoogleFonts.inter(color: Colors.grey[600]),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      onPressed: () => _handleReturnForRevision(context, 'Government ID'),
+                                      child: const Text('Return for revision'),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () => _handleApprove(context, 'Government ID'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      child: const Text('Approve'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Professional ID Section
+                      Card(
+                        elevation: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Professional ID',
+                                style: GoogleFonts.inter(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Lawyer License',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Container(
+                                height: 100,
+                                color: Colors.grey[200],
+                                child: Center(
+                                  child: Text(
+                                    'Document Preview Placeholder',
+                                    style: GoogleFonts.inter(color: Colors.grey[600]),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      onPressed: () => _handleReturnForRevision(context, 'Professional ID'),
+                                      child: const Text('Return for revision'),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () => _handleApprove(context, 'Professional ID'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      child: const Text('Approve'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _handleApprove(BuildContext context, String documentType) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'Approve $documentType',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Are you sure you want to approve this $documentType?',
+            style: GoogleFonts.inter(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('$documentType approved (placeholder action)'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Approve'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleReturnForRevision(BuildContext context, String documentType) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'Return for Revision',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Request revision for this $documentType?',
+            style: GoogleFonts.inter(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('$documentType returned for revision (placeholder action)'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              },
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleReject(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'Reject Applicant',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Are you sure you want to reject this applicant? This action cannot be undone.',
+            style: GoogleFonts.inter(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                // Clear selection and go back to list
+                context.read<OnboardingQueueBloc>().add(
+                  ClearSelectedApplicantEvent(),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Applicant rejected (placeholder action)'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Reject'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
