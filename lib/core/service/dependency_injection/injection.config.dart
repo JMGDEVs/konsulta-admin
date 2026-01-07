@@ -27,6 +27,8 @@ import 'package:konsulta_admin/core/features/onboarding_queue/domain/repositorie
     as _i209;
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_pending_applicants_usecase.dart'
     as _i844;
+import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_under_review_applicants_usecase.dart'
+    as _i361;
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/start_review_usecase.dart'
     as _i556;
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart'
@@ -72,17 +74,23 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i209.OnboardingQueueRepository>(),
       ),
     );
+    gh.lazySingleton<_i361.GetUnderReviewApplicantsUseCase>(
+      () => _i361.GetUnderReviewApplicantsUseCase(
+        gh<_i209.OnboardingQueueRepository>(),
+      ),
+    );
     gh.lazySingleton<_i556.StartReviewUseCase>(
       () => _i556.StartReviewUseCase(gh<_i209.OnboardingQueueRepository>()),
+    );
+    gh.lazySingleton<_i988.AuthBloc>(
+      () => _i988.AuthBloc(gh<_i218.AuthUseCase>()),
     );
     gh.factory<_i908.OnboardingQueueBloc>(
       () => _i908.OnboardingQueueBloc(
         gh<_i844.GetPendingApplicantsUseCase>(),
+        gh<_i361.GetUnderReviewApplicantsUseCase>(),
         gh<_i556.StartReviewUseCase>(),
       ),
-    );
-    gh.lazySingleton<_i988.AuthBloc>(
-      () => _i988.AuthBloc(gh<_i218.AuthUseCase>()),
     );
     return this;
   }

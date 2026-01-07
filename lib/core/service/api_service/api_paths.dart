@@ -5,5 +5,6 @@ class ApiPath {
 
   // onboarding queue
   static const getPendingApplicants = '/applicants/get-pending-review';
+  static const getUnderReviewApplicants = '/applicants/get-under-review';
   static const startReview = '/document/start-review';
 }

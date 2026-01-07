@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:konsulta_admin/core/features/dashboard/dashboard_layout.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/pending_applications_screen.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/under_review_screen.dart';
 
 List<Widget> pages = [
   // home PARENT (Index 0)
@@ -14,7 +15,7 @@ List<Widget> pages = [
   const PendingApplicationsScreen(),
 
   // Under Review (Index 3)
-  const Center(child: Text('Under Review Screen')),
+  const UnderReviewScreen(),
 
   // Verified (Index 4)
   const Center(child: Text('Verified Screen')),
