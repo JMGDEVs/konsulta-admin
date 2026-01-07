@@ -14,15 +14,20 @@ class OnboardingQueueService {
   OnboardingQueueService(@Named('devConfig') this.config);
 
   Future<List<ApplicantModel>> getPendingApplicants({
-    String? search,
-    String? professionalTag,
+    String? searchQuery,
+    String? professionId,
+    int? pageNumber,
+    int? pageSize,
   }) async {
     final token = await _secureStorage.read(key: 'token');
 
     final queryParameters = {
-      if (search != null && search.isNotEmpty) 'search': search,
-      if (professionalTag != null && professionalTag.isNotEmpty)
-        'professionalTag': professionalTag,
+      if (searchQuery != null && searchQuery.isNotEmpty)
+        'searchQuery': searchQuery,
+      if (professionId != null && professionId.isNotEmpty)
+        'professionId': professionId,
+      if (pageNumber != null) 'pageNumber': pageNumber.toString(),
+      if (pageSize != null) 'pageSize': pageSize.toString(),
     };
 
     final uri = Uri.https(
@@ -42,24 +47,32 @@ class OnboardingQueueService {
     if (response.statusCode == 200) {
       final dynamic decoded = json.decode(response.body);
       List<dynamic> data;
-      if (decoded is List) {
+
+      if (decoded is Map && decoded.containsKey('data')) {
+        final dataObj = decoded['data'];
+        if (dataObj is Map && dataObj.containsKey('applicants')) {
+          // Swagger API returns: { success, message, data: { applicants: [...] } }
+          data = dataObj['applicants'] as List<dynamic>;
+        } else if (dataObj is List) {
+          // Fallback: data is directly a list
+          data = dataObj;
+        } else {
+          data = [];
+        }
+      } else if (decoded is List) {
+        // Fallback: response is directly a list
         data = decoded;
-      } else if (decoded is Map && decoded.containsKey('data')) {
-        data = decoded['data'] as List<dynamic>;
       } else {
-        // Fallback: try to find a list value if 'data' key doesn't exist
-        // or return empty if structure is unknown.
-        // For now, assuming 'data' or similar wrapper if it's a map.
-        // If the map is the item itself (single item), this logic isn't for getPendingApplicants.
         data = [];
       }
+
       return data.map((json) => ApplicantModel.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load pending applicants');
     }
   }
 
-  Future<bool> startReview(String userId) async {
+  Future<bool> startReview(String applicantId) async {
     final token = await _secureStorage.read(key: 'token');
 
     final uri = Uri.https(
@@ -67,23 +80,14 @@ class OnboardingQueueService {
       '${config.apiBasePath}${ApiPath.startReview}',
     );
 
-    // Assuming the API expects userId as query param or body.
-    // Based on "Call API: api/admin/document/start-review" description, it likely needs the applicant ID.
-    // I will check the swagger definition again if possible or assume query param for now as it's common for actions on resources.
-    // Re-checking swagger chunks:
-    // "/api/admin/document/review": {"post": ...} was visible.
-    // Wait, the prompt says "api/admin/document/start-review".
-    // I will assume it's a POST request.
-
-    // For now, I'll put userId in query params as a guess, if it fails we can adjust.
-    // Actually, looking at other endpoints in swagger, they often take parameters in query.
-
+    // Swagger API expects POST request body with applicantId
     final response = await http.post(
-      uri.replace(queryParameters: {'userId': userId}),
+      uri,
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
+      body: json.encode({'applicantId': applicantId}),
     );
 
     if (response.statusCode == 200) {

@@ -2,8 +2,8 @@ import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applic
 
 abstract class OnboardingQueueRepository {
   Future<List<ApplicantModel>> getPendingApplicants({
-    String? search,
-    String? professionalTag,
+    String? searchQuery,
+    String? professionId,
   });
-  Future<bool> startReview(String userId);
+  Future<bool> startReview(String applicantId);
 }

@@ -4,8 +4,8 @@ class OnboardingQueueState {
   final bool isLoading;
   final List<ApplicantModel> applicants;
   final String? errorMessage;
-  final String search;
-  final String? professionalTag;
+  final String searchQuery;
+  final String? professionId;
   final bool isReviewLoading;
   final bool sortAscending;
   final int sortColumnIndex;
@@ -14,8 +14,8 @@ class OnboardingQueueState {
     this.isLoading = false,
     this.applicants = const [],
     this.errorMessage,
-    this.search = '',
-    this.professionalTag,
+    this.searchQuery = '',
+    this.professionId,
     this.isReviewLoading = false,
     this.sortAscending =
         false, // Default Newest first (descending date usually, but depends on logic)
@@ -26,8 +26,8 @@ class OnboardingQueueState {
     bool? isLoading,
     List<ApplicantModel>? applicants,
     String? errorMessage,
-    String? search,
-    String? professionalTag,
+    String? searchQuery,
+    String? professionId,
     bool? isReviewLoading,
     bool? sortAscending,
     int? sortColumnIndex,
@@ -36,8 +36,8 @@ class OnboardingQueueState {
       isLoading: isLoading ?? this.isLoading,
       applicants: applicants ?? this.applicants,
       errorMessage: errorMessage ?? this.errorMessage,
-      search: search ?? this.search,
-      professionalTag: professionalTag ?? this.professionalTag,
+      searchQuery: searchQuery ?? this.searchQuery,
+      professionId: professionId ?? this.professionId,
       isReviewLoading: isReviewLoading ?? this.isReviewLoading,
       sortAscending: sortAscending ?? this.sortAscending,
       sortColumnIndex: sortColumnIndex ?? this.sortColumnIndex,

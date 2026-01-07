@@ -103,6 +103,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
               // Immediate update as requested
               context.read<OnboardingQueueBloc>().add(UpdateSearchEvent(value));
             },
+            // Removed search button as per task requirements
             decoration: InputDecoration(
               hintText: 'Search name, number, or email...',
               hintStyle: GoogleFonts.inter(color: Colors.black, fontSize: 14),
@@ -148,7 +149,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
                 style: GoogleFonts.inter(color: Colors.black, fontSize: 14),
               ),
               value: context.select(
-                (OnboardingQueueBloc bloc) => bloc.state.professionalTag,
+                (OnboardingQueueBloc bloc) => bloc.state.professionId,
               ),
               icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black),
               items: ['Doctor', 'Nurse', 'Psychologist', 'Midwife']
@@ -164,35 +165,6 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
                   UpdateProfessionalTagEvent(value),
                 );
               },
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        // Search Button
-        SizedBox(
-          height: 48,
-          child: ElevatedButton.icon(
-            onPressed: () {
-              context.read<OnboardingQueueBloc>().add(
-                GetPendingApplicantsEvent(),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFC107), // Amber
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-            ),
-            icon: const Icon(Icons.search, size: 20),
-            label: Text(
-              'Search',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
             ),
           ),
         ),
@@ -481,7 +453,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
 
     context.read<OnboardingQueueBloc>().add(
       StartReviewEvent(
-        userId: applicant.id!,
+        applicantId: applicant.id!,
         onSuccess: () {
           // Show dialog "Application moved"
           showDialog(

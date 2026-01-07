@@ -30,8 +30,8 @@ class OnboardingQueueBloc
 
     try {
       final applicants = await getPendingApplicantsUseCase(
-        search: event.search ?? state.search,
-        professionalTag: event.professionalTag ?? state.professionalTag,
+        searchQuery: event.searchQuery ?? state.searchQuery,
+        professionId: event.professionId ?? state.professionId,
       );
 
       // Default sort: Newest first (descending by created_at)
@@ -53,7 +53,7 @@ class OnboardingQueueBloc
   ) async {
     emit(state.copyWith(isReviewLoading: true));
     try {
-      final success = await startReviewUseCase(event.userId);
+      final success = await startReviewUseCase(event.applicantId);
       if (success) {
         event.onSuccess();
         // Refresh list after successful review start
@@ -70,16 +70,16 @@ class OnboardingQueueBloc
     UpdateSearchEvent event,
     Emitter<OnboardingQueueState> emit,
   ) {
-    emit(state.copyWith(search: event.search));
-    add(GetPendingApplicantsEvent(search: event.search));
+    emit(state.copyWith(searchQuery: event.searchQuery));
+    add(GetPendingApplicantsEvent(searchQuery: event.searchQuery));
   }
 
   void _onUpdateProfessionalTag(
     UpdateProfessionalTagEvent event,
     Emitter<OnboardingQueueState> emit,
   ) {
-    emit(state.copyWith(professionalTag: event.professionalTag));
-    add(GetPendingApplicantsEvent(professionalTag: event.professionalTag));
+    emit(state.copyWith(professionId: event.professionId));
+    add(GetPendingApplicantsEvent(professionId: event.professionId));
   }
 
   void _onSortApplicants(

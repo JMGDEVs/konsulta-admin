@@ -8,10 +8,13 @@ class GetPendingApplicantsUseCase {
 
   GetPendingApplicantsUseCase(this._repository);
 
-  Future<List<ApplicantModel>> call({String? search, String? professionalTag}) {
+  Future<List<ApplicantModel>> call({
+    String? searchQuery,
+    String? professionId,
+  }) {
     return _repository.getPendingApplicants(
-      search: search,
-      professionalTag: professionalTag,
+      searchQuery: searchQuery,
+      professionId: professionId,
     );
   }
 }

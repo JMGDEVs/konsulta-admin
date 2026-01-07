@@ -7,7 +7,7 @@ class StartReviewUseCase {
 
   StartReviewUseCase(this._repository);
 
-  Future<bool> call(String userId) {
-    return _repository.startReview(userId);
+  Future<bool> call(String applicantId) {
+    return _repository.startReview(applicantId);
   }
 }

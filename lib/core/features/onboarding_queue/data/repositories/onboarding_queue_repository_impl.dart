@@ -11,17 +11,17 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
 
   @override
   Future<List<ApplicantModel>> getPendingApplicants({
-    String? search,
-    String? professionalTag,
+    String? searchQuery,
+    String? professionId,
   }) {
     return _service.getPendingApplicants(
-      search: search,
-      professionalTag: professionalTag,
+      searchQuery: searchQuery,
+      professionId: professionId,
     );
   }
 
   @override
-  Future<bool> startReview(String userId) {
-    return _service.startReview(userId);
+  Future<bool> startReview(String applicantId) {
+    return _service.startReview(applicantId);
   }
 }

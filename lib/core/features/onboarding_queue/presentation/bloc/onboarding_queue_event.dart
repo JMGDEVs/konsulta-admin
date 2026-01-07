@@ -3,34 +3,34 @@ part of 'onboarding_queue_bloc.dart';
 abstract class OnboardingQueueEvent {}
 
 class GetPendingApplicantsEvent extends OnboardingQueueEvent {
-  final String? search;
-  final String? professionalTag;
+  final String? searchQuery;
+  final String? professionId;
   final bool isRefresh;
 
   GetPendingApplicantsEvent({
-    this.search,
-    this.professionalTag,
+    this.searchQuery,
+    this.professionId,
     this.isRefresh = false,
   });
 }
 
 class StartReviewEvent extends OnboardingQueueEvent {
-  final String userId;
+  final String applicantId;
   final Function() onSuccess;
 
-  StartReviewEvent({required this.userId, required this.onSuccess});
+  StartReviewEvent({required this.applicantId, required this.onSuccess});
 }
 
 class UpdateSearchEvent extends OnboardingQueueEvent {
-  final String search;
+  final String searchQuery;
 
-  UpdateSearchEvent(this.search);
+  UpdateSearchEvent(this.searchQuery);
 }
 
 class UpdateProfessionalTagEvent extends OnboardingQueueEvent {
-  final String? professionalTag;
+  final String? professionId;
 
-  UpdateProfessionalTagEvent(this.professionalTag);
+  UpdateProfessionalTagEvent(this.professionId);
 }
 
 class SortApplicantsEvent extends OnboardingQueueEvent {
