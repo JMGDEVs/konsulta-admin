@@ -621,7 +621,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
             ),
           ).then((_) {
             if (context.mounted) {
-              context.push(RoutePaths.applicationReview);
+              context.push(RoutePaths.underReview);
             }
           });
         },
