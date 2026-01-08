@@ -1107,42 +1107,115 @@ class _ApplicantDetailsView extends StatelessWidget {
   void _handleReject(BuildContext context) {
     showDialog(
       context: context,
+      barrierColor: Colors.black54,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(
-            'Reject Applicant',
-            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            'Are you sure you want to reject this applicant? This action cannot be undone.',
-            style: GoogleFonts.inter(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                // Clear selection and go back to list
-                context.read<OnboardingQueueBloc>().add(
-                  ClearSelectedApplicantEvent(),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Applicant rejected (placeholder action)'),
-                    backgroundColor: Colors.red,
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Colors.white,
+          child: SizedBox(
+            width: 407,
+            height: 211,
+            child: Stack(
+              children: [
+                // Title - TOP: 29, LEFT: 20, RIGHT: 20
+                Positioned(
+                  top: 29,
+                  left: 20,
+                  right: 20,
+                  child: Text(
+                    'Reject Application',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      height: 1.0,
+                    ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Reject'),
+                ),
+                // Body text - TOP: 66, LEFT: 63, RIGHT: 63
+                Positioned(
+                  top: 66,
+                  left: 63,
+                  right: 63,
+                  child: Text(
+                    'Are you sure you want to reject this application',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+                // Cancel button - TOP: 143, LEFT: 28, BOTTOM: 20, RIGHT: 209
+                Positioned(
+                  top: 143,
+                  left: 28,
+                  right: 209,
+                  bottom: 20,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE9E9E9),
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+                // Reject button - TOP: 143, LEFT: 209, RIGHT: 28, BOTTOM: 20
+                Positioned(
+                  top: 143,
+                  left: 209,
+                  right: 28,
+                  bottom: 20,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      // Clear selection and go back to list
+                      context.read<OnboardingQueueBloc>().add(
+                        ClearSelectedApplicantEvent(),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Applicant rejected (placeholder action)'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFB4545),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: Text(
+                      'Reject',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -1247,39 +1320,9 @@ class _ApplicantDetailsView extends StatelessWidget {
   void _handleReturnForRevision(BuildContext context) {
     showDialog(
       context: context,
+      barrierColor: Colors.black54,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(
-            'Return for Revision',
-            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            'Are you sure you want to return this document for revision?',
-            style: GoogleFonts.inter(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Government ID returned for revision (placeholder action)'),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Return'),
-            ),
-          ],
-        );
+        return _ReturnApplicationDialog();
       },
     );
   }
@@ -1287,38 +1330,111 @@ class _ApplicantDetailsView extends StatelessWidget {
   void _handleApproveGovernmentId(BuildContext context) {
     showDialog(
       context: context,
+      barrierColor: Colors.black54,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(
-            'Approve Government ID',
-            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            'Are you sure you want to approve this Government ID document?',
-            style: GoogleFonts.inter(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Government ID approved (placeholder action)'),
-                    backgroundColor: Colors.green,
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Colors.white,
+          child: SizedBox(
+            width: 407,
+            height: 211,
+            child: Stack(
+              children: [
+                // Title - TOP: 29, LEFT: 20, RIGHT: 20
+                Positioned(
+                  top: 29,
+                  left: 20,
+                  right: 20,
+                  child: Text(
+                    'Approve Application',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      height: 1.0,
+                    ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0BC43C),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Approve'),
+                ),
+                // Body text - TOP: 66, LEFT: 63, RIGHT: 63
+                Positioned(
+                  top: 66,
+                  left: 63,
+                  right: 63,
+                  child: Text(
+                    'Are you sure you want to approve this application',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+                // Cancel button - TOP: 143, LEFT: 28, BOTTOM: 20, RIGHT: 209
+                Positioned(
+                  top: 143,
+                  left: 28,
+                  right: 209,
+                  bottom: 20,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE9E9E9),
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+                // Approve button - TOP: 143, LEFT: 209, RIGHT: 28, BOTTOM: 20
+                Positioned(
+                  top: 143,
+                  left: 209,
+                  right: 28,
+                  bottom: 20,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Government ID approved (placeholder action)'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0BC43C),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: Text(
+                      'Approve',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -1327,40 +1443,352 @@ class _ApplicantDetailsView extends StatelessWidget {
   void _handleApproveProfessionalId(BuildContext context) {
     showDialog(
       context: context,
+      barrierColor: Colors.black54,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(
-            'Approve Professional ID',
-            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            'Are you sure you want to approve this Professional ID document?',
-            style: GoogleFonts.inter(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Professional ID approved (placeholder action)'),
-                    backgroundColor: Colors.green,
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Colors.white,
+          child: SizedBox(
+            width: 407,
+            height: 211,
+            child: Stack(
+              children: [
+                // Title - TOP: 29, LEFT: 20, RIGHT: 20
+                Positioned(
+                  top: 29,
+                  left: 20,
+                  right: 20,
+                  child: Text(
+                    'Approve Application',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      height: 1.0,
+                    ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0BC43C),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Approve'),
+                ),
+                // Body text - TOP: 66, LEFT: 63, RIGHT: 63
+                Positioned(
+                  top: 66,
+                  left: 63,
+                  right: 63,
+                  child: Text(
+                    'Are you sure you want to approve this application',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+                // Cancel button - TOP: 143, LEFT: 28, BOTTOM: 20, RIGHT: 209
+                Positioned(
+                  top: 143,
+                  left: 28,
+                  right: 209,
+                  bottom: 20,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE9E9E9),
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+                // Approve button - TOP: 143, LEFT: 209, RIGHT: 28, BOTTOM: 20
+                Positioned(
+                  top: 143,
+                  left: 209,
+                  right: 28,
+                  bottom: 20,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Professional ID approved (placeholder action)'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0BC43C),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: Text(
+                      'Approve',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
+    );
+  }
+}
+
+class _ReturnApplicationDialog extends StatefulWidget {
+  const _ReturnApplicationDialog();
+
+  @override
+  State<_ReturnApplicationDialog> createState() => _ReturnApplicationDialogState();
+}
+
+class _ReturnApplicationDialogState extends State<_ReturnApplicationDialog> {
+  final TextEditingController _otherController = TextEditingController();
+  String? _selectedReason;
+
+  final List<String> _reasons = [
+    'Incomplete information',
+    'Invalid documents',
+    'Poor image quality',
+    'Expired credentials',
+    'Other',
+  ];
+
+  @override
+  void dispose() {
+    _otherController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      backgroundColor: Colors.white,
+      child: Container(
+        width: 413,
+        height: 461,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0x33000000),
+              blurRadius: 40,
+              offset: const Offset(0, 0),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Title - TOP: 39, LEFT: 108, RIGHT: 107, BOTTOM: 395
+            Positioned(
+              top: 39,
+              left: 108,
+              right: 107,
+              bottom: 395,
+              child: Text(
+                'Return Application',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  height: 1.0,
+                ),
+              ),
+            ),
+            // Reason for returning container (label + dropdown) - TOP: 86, LEFT: 20, RIGHT: 20, BOTTOM: 307
+            Positioned(
+              top: 86,
+              left: 20,
+              right: 20,
+              bottom: 307,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Reason for returning:',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      height: 1.0,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    height: 39,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFBABABA)),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedReason,
+                        hint: Text(
+                          'Choose reason',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF6F6F6F),
+                            height: 1.0,
+                          ),
+                        ),
+                        isExpanded: true,
+                        icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black),
+                        items: _reasons.map((String reason) {
+                          return DropdownMenuItem<String>(
+                            value: reason,
+                            child: Text(
+                              reason,
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                height: 1.0,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedReason = newValue;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Other container (label + text field) - TOP: 174, LEFT: 20, RIGHT: 20, BOTTOM: 108
+            Positioned(
+              top: 174,
+              left: 20,
+              right: 20,
+              bottom: 108,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Other (Optional):',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      height: 1.0,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFBABABA)),
+                      ),
+                      child: TextField(
+                        controller: _otherController,
+                        maxLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.all(10),
+                          hintText: '',
+                          hintStyle: GoogleFonts.inter(
+                            fontSize: 16,
+                            color: const Color(0xFF6F6F6F),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Cancel button - TOP: 393, LEFT: 20, RIGHT: 213, BOTTOM: 20
+            Positioned(
+              top: 393,
+              left: 20,
+              right: 213,
+              bottom: 20,
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE9E9E9),
+                  foregroundColor: Colors.black,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                ),
+                child: Text(
+                  'Cancel',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    height: 1.0,
+                  ),
+                ),
+              ),
+            ),
+            // Continue button - TOP: 393, LEFT: 213, RIGHT: 20, BOTTOM: 20
+            Positioned(
+              top: 393,
+              left: 213,
+              right: 20,
+              bottom: 20,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // Placeholder for future API integration
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0BC43C),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                ),
+                child: Text(
+                  'Continue',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    height: 1.0,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
