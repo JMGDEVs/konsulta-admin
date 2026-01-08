@@ -25,18 +25,33 @@ class UnderReviewTable extends StatelessWidget {
           return Center(child: Text('Error: ${state.errorMessage}'));
         }
 
-        return Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade200),
-            borderRadius: BorderRadius.circular(8),
+        return ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
           ),
-          child: DataTable2(
-            columnSpacing: 12,
-            horizontalMargin: 12,
-            minWidth: 1200,
-            headingRowColor: WidgetStateProperty.all(Colors.grey.shade50),
-            sortColumnIndex: state.underReviewSortColumnIndex,
-            sortAscending: state.underReviewSortAscending,
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade200),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: DataTable2(
+              columnSpacing: 12,
+              horizontalMargin: 12,
+              minWidth: 1200,
+              headingRowDecoration: const BoxDecoration(
+                color: Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+              ),
+              dataRowColor: WidgetStateProperty.all(Colors.white),
+              border: const TableBorder(
+                horizontalInside: BorderSide(color: Color(0xFFE9E9E9), width: 1),
+              ),
+              sortColumnIndex: state.underReviewSortColumnIndex,
+              sortAscending: state.underReviewSortAscending,
             columns: [
               DataColumn2(
                 label: _buildColumnHeader('Name'),
@@ -94,43 +109,90 @@ class UnderReviewTable extends StatelessWidget {
                   DataCell(
                     Text(
                       applicant.fullName,
-                      style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
                     ),
                   ),
                   DataCell(
                     Text(
                       applicant.professionalTag ?? '---',
-                      style: GoogleFonts.inter(),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
                     ),
                   ),
                   DataCell(
-                    Text(applicant.phone ?? '---', style: GoogleFonts.inter()),
+                    Text(
+                      applicant.phone ?? '---',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
                   ),
                   DataCell(
-                    Text(applicant.email ?? '---', style: GoogleFonts.inter()),
+                    Text(
+                      applicant.email ?? '---',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
                   ),
                   DataCell(
                     Text(
                       applicant.verificationStatus ?? 'Pending',
                       style: GoogleFonts.inter(
-                        color: Colors.orange,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                        color: const Color(0xFFFFC107), // Yellow text, no background
                       ),
                     ),
                   ),
                   DataCell(
-                    Text(applicant.gender ?? '---', style: GoogleFonts.inter()),
+                    Text(
+                      applicant.gender ?? '---',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
                   ),
                   DataCell(
                     Text(
                       DateFormatters.formatDateForTable(applicant.birthDate),
-                      style: GoogleFonts.inter(),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
                     ),
                   ),
                   DataCell(
                     Text(
                       DateFormatters.formatDateForTable(applicant.createdAt),
-                      style: GoogleFonts.inter(),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
                     ),
                   ),
                   DataCell(
@@ -170,6 +232,7 @@ class UnderReviewTable extends StatelessWidget {
                 ],
               );
             }).toList(),
+            ),
           ),
         );
       },
@@ -180,8 +243,10 @@ class UnderReviewTable extends StatelessWidget {
     return Text(
       text,
       style: GoogleFonts.inter(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        height: 1.3, // 130% line height
+        letterSpacing: -0.32, // -2% of 16px
         color: Colors.black,
       ),
     );
