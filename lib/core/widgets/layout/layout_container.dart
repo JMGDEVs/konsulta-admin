@@ -15,17 +15,19 @@ class Layout extends StatefulWidget {
 class _LayoutState extends State<Layout> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.greybackgroundcolor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        )
+    return SizedBox.expand(
+      child: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.greybackgroundcolor,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: widget.child,
       ),
-      height: double.infinity,
-      width: double.infinity,
-      child: widget.child,
     );
+
   }
 }

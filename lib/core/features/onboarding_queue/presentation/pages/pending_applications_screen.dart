@@ -8,6 +8,7 @@ import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applic
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart';
 import 'package:konsulta_admin/core/features/router/route_paths.dart';
 import 'package:konsulta_admin/core/service/dependency_injection/injection.dart';
+import 'package:konsulta_admin/core/widgets/layout/layout_container.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class PendingApplicationsScreen extends StatelessWidget {
@@ -50,43 +51,39 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 0.5,
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Pending Applications',
-                  style: GoogleFonts.inter(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+    return Layout(
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        elevation: 0.5,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Pending Applications',
+                style: GoogleFonts.inter(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Select an application to move it under your review',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Select an application to move it under your review',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: Colors.grey[600],
                 ),
-                const SizedBox(height: 24),
-                _buildFilters(context),
-                const SizedBox(height: 24),
-                Expanded(child: _buildTable(context)),
-              ],
-            ),
+              ),
+              const SizedBox(height: 24),
+              _buildFilters(context),
+              const SizedBox(height: 24),
+              Expanded(child: _buildTable(context)),
+            ],
           ),
         ),
       ),

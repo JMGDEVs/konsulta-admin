@@ -89,7 +89,7 @@ class _HomeStateControllerState extends State<HomeStateController>
                 centerTitle: false,
                 toolbarHeight: 80,
                 title: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Row(
                     children: [
                       Text(
@@ -104,7 +104,7 @@ class _HomeStateControllerState extends State<HomeStateController>
                   ),
                 ),
               ),
-              backgroundColor: Colors.grey.shade100,
+              backgroundColor: AppColors.darkgreyColor,
               body: IndexedStack(index: selectedIndex, children: pages),
             ),
           ),

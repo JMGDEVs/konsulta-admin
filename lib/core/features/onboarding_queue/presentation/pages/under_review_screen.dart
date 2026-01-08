@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applicant_model.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart';
 import 'package:konsulta_admin/core/service/dependency_injection/injection.dart';
+import 'package:konsulta_admin/core/widgets/layout/layout_container.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class UnderReviewScreen extends StatelessWidget {
@@ -47,61 +48,51 @@ class _UnderReviewViewState extends State<UnderReviewView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: BlocBuilder<OnboardingQueueBloc, OnboardingQueueState>(
+    return Layout(
+      child: BlocBuilder<OnboardingQueueBloc, OnboardingQueueState>(
         builder: (context, state) {
           // Check if an applicant is selected for review
           if (state.selectedApplicantForReview != null) {
             // Render ApplicantDetailsView with top padding only to show curved corners
-            return Padding(
-              padding: const EdgeInsets.only(top: 12.0),
-              child: _ApplicantDetailsView(
-                applicant: state.selectedApplicantForReview!,
-              ),
+            return _ApplicantDetailsView(
+              applicant: state.selectedApplicantForReview!,
             );
           }
 
           // Otherwise, show the table view with top padding only
-          return Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
+          return Container(
+            clipBehavior: Clip.antiAlias,
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(20),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Under Review',
-                      style: GoogleFonts.inter(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Review the uploaded IDs to approve or reject applications.',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    _buildFilters(context),
-                    const SizedBox(height: 24),
-                    Expanded(child: _buildTable(context)),
-                  ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Under Review',
+                  style: GoogleFonts.inter(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 8),
+                Text(
+                  'Review the uploaded IDs to approve or reject applications.',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildFilters(context),
+                const SizedBox(height: 24),
+                Expanded(child: _buildTable(context)),
+              ],
             ),
           );
         },
