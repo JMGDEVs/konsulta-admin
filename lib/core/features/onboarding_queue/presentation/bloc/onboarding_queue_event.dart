@@ -1,6 +1,6 @@
 part of 'onboarding_queue_bloc.dart';
 
-enum ActiveScreen { pending, underReview }
+enum ActiveScreen { pending, underReview, verified }
 
 abstract class OnboardingQueueEvent {}
 
@@ -28,6 +28,18 @@ class GetUnderReviewApplicantsEvent extends OnboardingQueueEvent {
   final bool isRefresh;
 
   GetUnderReviewApplicantsEvent({
+    this.searchQuery,
+    this.professionId,
+    this.isRefresh = false,
+  });
+}
+
+class GetVerifiedApplicantsEvent extends OnboardingQueueEvent {
+  final String? searchQuery;
+  final String? professionId;
+  final bool isRefresh;
+
+  GetVerifiedApplicantsEvent({
     this.searchQuery,
     this.professionId,
     this.isRefresh = false,

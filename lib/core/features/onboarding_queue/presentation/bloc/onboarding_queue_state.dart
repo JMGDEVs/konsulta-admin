@@ -22,6 +22,14 @@ class OnboardingQueueState {
   final bool underReviewSortAscending;
   final int underReviewSortColumnIndex;
 
+  // Verified Applications filter state
+  final String verifiedSearchQuery;
+  final String? verifiedProfessionId;
+  final bool verifiedSortAscending;
+  final int verifiedSortColumnIndex;
+  final bool isVerifiedLoading;
+  final List<ApplicantModel> verifiedApplicants;
+
   final bool isReviewLoading;
 
   // Selected applicant for detail view
@@ -50,6 +58,12 @@ class OnboardingQueueState {
     this.selectedApplicantForReview,
     this.professionalTags = const [],
     this.isLoadingProfessionalTags = false,
+    this.verifiedSearchQuery = '',
+    this.verifiedProfessionId,
+    this.verifiedSortAscending = false,
+    this.verifiedSortColumnIndex = 7,
+    this.isVerifiedLoading = false,
+    this.verifiedApplicants = const [],
   });
 
   OnboardingQueueState copyWith({
@@ -71,6 +85,12 @@ class OnboardingQueueState {
     ApplicantModel? selectedApplicantForReview,
     List<String>? professionalTags,
     bool? isLoadingProfessionalTags,
+    String? verifiedSearchQuery,
+    String? verifiedProfessionId,
+    bool? verifiedSortAscending,
+    int? verifiedSortColumnIndex,
+    bool? isVerifiedLoading,
+    List<ApplicantModel>? verifiedApplicants,
   }) {
     return OnboardingQueueState(
       isLoading: isLoading ?? this.isLoading,
@@ -99,6 +119,14 @@ class OnboardingQueueState {
       professionalTags: professionalTags ?? this.professionalTags,
       isLoadingProfessionalTags:
           isLoadingProfessionalTags ?? this.isLoadingProfessionalTags,
+      verifiedSearchQuery: verifiedSearchQuery ?? this.verifiedSearchQuery,
+      verifiedProfessionId: verifiedProfessionId ?? this.verifiedProfessionId,
+      verifiedSortAscending:
+          verifiedSortAscending ?? this.verifiedSortAscending,
+      verifiedSortColumnIndex:
+          verifiedSortColumnIndex ?? this.verifiedSortColumnIndex,
+      isVerifiedLoading: isVerifiedLoading ?? this.isVerifiedLoading,
+      verifiedApplicants: verifiedApplicants ?? this.verifiedApplicants,
     );
   }
 }

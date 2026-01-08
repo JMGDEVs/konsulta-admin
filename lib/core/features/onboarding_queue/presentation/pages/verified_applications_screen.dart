@@ -1,48 +1,45 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applicant_model.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart';
-import 'package:konsulta_admin/core/features/router/route_paths.dart';
 import 'package:konsulta_admin/core/service/dependency_injection/injection.dart';
 import 'package:konsulta_admin/core/widgets/layout/layout_container.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class PendingApplicationsScreen extends StatelessWidget {
-  const PendingApplicationsScreen({super.key});
+class VerifiedApplicationsScreen extends StatelessWidget {
+  const VerifiedApplicationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<OnboardingQueueBloc>(),
-      child: const PendingApplicationsView(),
+      child: const VerifiedApplicationsView(),
     );
   }
 }
 
-class PendingApplicationsView extends StatefulWidget {
-  const PendingApplicationsView({super.key});
+class VerifiedApplicationsView extends StatefulWidget {
+  const VerifiedApplicationsView({super.key});
 
   @override
-  State<PendingApplicationsView> createState() =>
-      _PendingApplicationsViewState();
+  State<VerifiedApplicationsView> createState() =>
+      _VerifiedApplicationsViewState();
 }
 
-class _PendingApplicationsViewState extends State<PendingApplicationsView> {
+class _VerifiedApplicationsViewState extends State<VerifiedApplicationsView> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Set active screen to Pending
+    // Set active screen to Verified
     context.read<OnboardingQueueBloc>().add(
-      SetActiveScreenEvent(ActiveScreen.pending),
+      SetActiveScreenEvent(ActiveScreen.verified),
     );
-    // Trigger the event to fetch pending applicants
-    context.read<OnboardingQueueBloc>().add(GetPendingApplicantsEvent());
+    // Trigger the event to fetch verified applicants
+    context.read<OnboardingQueueBloc>().add(GetVerifiedApplicantsEvent());
     // Fetch professional tags from API
     context.read<OnboardingQueueBloc>().add(GetProfessionalTagsEvent());
   }
@@ -67,7 +64,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Pending Applications',
+              'Verified Applications',
               style: GoogleFonts.inter(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -76,7 +73,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Select an application to move it under your review',
+              'View all verified applicant profiles',
               style: GoogleFonts.inter(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 24),
@@ -168,7 +165,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
                   Text(
                     context.select(
                       (OnboardingQueueBloc bloc) =>
-                          bloc.state.pendingProfessionId ?? 'Profession',
+                          bloc.state.verifiedProfessionId ?? 'Profession',
                     ),
                     style: GoogleFonts.inter(
                       color: const Color(0xFF000000),
@@ -257,11 +254,11 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
               final state = context.read<OnboardingQueueBloc>().state;
               // Default check logic: Sort by 'Registered date' (index 7)
               final isNewest =
-                  state.pendingSortColumnIndex == 7 &&
-                  !state.pendingSortAscending;
+                  state.verifiedSortColumnIndex == 7 &&
+                  !state.verifiedSortAscending;
               final isOldest =
-                  state.pendingSortColumnIndex == 7 &&
-                  state.pendingSortAscending;
+                  state.verifiedSortColumnIndex == 7 &&
+                  state.verifiedSortAscending;
 
               return [
                 PopupMenuItem(
@@ -332,7 +329,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
   Widget _buildTable(BuildContext context) {
     return BlocBuilder<OnboardingQueueBloc, OnboardingQueueState>(
       builder: (context, state) {
-        if (state.isLoading && state.applicants.isEmpty) {
+        if (state.isVerifiedLoading && state.verifiedApplicants.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -378,8 +375,8 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
             horizontalMargin: 12,
             minWidth: 1200,
             headingRowColor: WidgetStateProperty.all(Colors.grey.shade50),
-            sortColumnIndex: state.pendingSortColumnIndex,
-            sortAscending: state.pendingSortAscending,
+            sortColumnIndex: state.verifiedSortColumnIndex,
+            sortAscending: state.verifiedSortAscending,
             columns: [
               DataColumn2(
                 label: _buildColumnHeader('Name'),
@@ -431,7 +428,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
               ),
               const DataColumn2(label: Text(''), size: ColumnSize.S),
             ],
-            rows: state.applicants.map((applicant) {
+            rows: state.verifiedApplicants.map((applicant) {
               return DataRow(
                 cells: [
                   DataCell(
@@ -454,9 +451,9 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
                   ),
                   DataCell(
                     Text(
-                      applicant.verificationStatus ?? 'Pending',
+                      applicant.documentStatus ?? 'VERIFIED',
                       style: GoogleFonts.inter(
-                        color: Colors.orange,
+                        color: Colors.green,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -477,36 +474,33 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
                     ),
                   ),
                   DataCell(
-                    InkWell(
-                      onTap: () => _handleReview(context, applicant),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Symbols.tab_move,
-                              size: 16,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Symbols.preview,
+                            size: 16,
+                            color: Colors.black,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'View',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
                               color: Colors.black,
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Handle',
-                              style: GoogleFonts.inter(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -543,89 +537,6 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
   void _onSort(BuildContext context, int columnIndex, bool ascending) {
     context.read<OnboardingQueueBloc>().add(
       SortApplicantsEvent(ascending, columnIndex),
-    );
-  }
-
-  void _handleReview(BuildContext context, ApplicantModel applicant) {
-    if (applicant.id == null) return;
-
-    context.read<OnboardingQueueBloc>().add(
-      StartReviewEvent(
-        applicantId: applicant.id!,
-        onSuccess: () {
-          // Show dialog "Application moved"
-          showDialog(
-            context: context,
-            barrierColor: Colors.black54,
-            builder: (context) => Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              backgroundColor: Colors.white,
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                width: 400,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Symbols.check_circle,
-                          color: Colors.green,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Application moved',
-                          style: GoogleFonts.inter(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Spacer(),
-                        InkWell(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: const Icon(
-                            Symbols.close,
-                            size: 20,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.inter(
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                          children: [
-                            const TextSpan(text: 'You can now review it in '),
-                            TextSpan(
-                              text: 'Under Review',
-                              style: GoogleFonts.inter(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ).then((_) {
-            if (context.mounted) {
-              context.push(RoutePaths.applicationReview);
-            }
-          });
-        },
-      ),
     );
   }
 }

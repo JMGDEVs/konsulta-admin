@@ -34,6 +34,17 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
   }
 
   @override
+  Future<List<ApplicantModel>> getVerifiedApplicants({
+    String? searchQuery,
+    String? professionId,
+  }) {
+    return _service.getVerifiedApplicants(
+      searchQuery: searchQuery,
+      professionId: professionId,
+    );
+  }
+
+  @override
   Future<bool> startReview(String applicantId) {
     return _service.startReview(applicantId);
   }

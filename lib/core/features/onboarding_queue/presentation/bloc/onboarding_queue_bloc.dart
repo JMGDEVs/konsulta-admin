@@ -4,6 +4,7 @@ import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applic
 import 'package:konsulta_admin/core/features/onboarding_queue/data/models/mock_applicants.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_pending_applicants_usecase.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_under_review_applicants_usecase.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_verified_applicants_usecase.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/start_review_usecase.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_professional_tags_usecase.dart';
 
@@ -15,18 +16,21 @@ class OnboardingQueueBloc
     extends Bloc<OnboardingQueueEvent, OnboardingQueueState> {
   final GetPendingApplicantsUseCase getPendingApplicantsUseCase;
   final GetUnderReviewApplicantsUseCase getUnderReviewApplicantsUseCase;
+  final GetVerifiedApplicantsUseCase getVerifiedApplicantsUseCase;
   final StartReviewUseCase startReviewUseCase;
   final GetProfessionalTagsUseCase getProfessionalTagsUseCase;
 
   OnboardingQueueBloc(
     this.getPendingApplicantsUseCase,
     this.getUnderReviewApplicantsUseCase,
+    this.getVerifiedApplicantsUseCase,
     this.startReviewUseCase,
     this.getProfessionalTagsUseCase,
   ) : super(OnboardingQueueState()) {
     on<SetActiveScreenEvent>(_onSetActiveScreen);
     on<GetPendingApplicantsEvent>(_onGetPendingApplicants);
     on<GetUnderReviewApplicantsEvent>(_onGetUnderReviewApplicants);
+    on<GetVerifiedApplicantsEvent>(_onGetVerifiedApplicants);
     on<StartReviewEvent>(_onStartReview);
     on<UpdateSearchEvent>(_onUpdateSearch);
     on<UpdateProfessionalTagEvent>(_onUpdateProfessionalTag);
@@ -142,6 +146,43 @@ class OnboardingQueueBloc
     }
   }
 
+  Future<void> _onGetVerifiedApplicants(
+    GetVerifiedApplicantsEvent event,
+    Emitter<OnboardingQueueState> emit,
+  ) async {
+    emit(state.copyWith(isVerifiedLoading: true, errorMessage: null));
+
+    try {
+      final searchQuery = event.searchQuery ?? state.verifiedSearchQuery;
+      final professionId = event.professionId ?? state.verifiedProfessionId;
+
+      final applicants = await getVerifiedApplicantsUseCase(
+        searchQuery: searchQuery,
+        professionId: professionId,
+      );
+
+      // Default sort: Newest first (descending by created_at)
+      applicants.sort((a, b) {
+        final dateA = DateTime.tryParse(a.createdAt ?? '') ?? DateTime(0);
+        final dateB = DateTime.tryParse(b.createdAt ?? '') ?? DateTime(0);
+        return dateB.compareTo(dateA);
+      });
+
+      emit(
+        state.copyWith(
+          isVerifiedLoading: false,
+          verifiedApplicants: applicants,
+          verifiedSearchQuery: searchQuery,
+          verifiedProfessionId: professionId,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(isVerifiedLoading: false, errorMessage: e.toString()),
+      );
+    }
+  }
+
   Future<void> _onStartReview(
     StartReviewEvent event,
     Emitter<OnboardingQueueState> emit,
@@ -166,7 +207,10 @@ class OnboardingQueueBloc
     Emitter<OnboardingQueueState> emit,
   ) {
     // Dispatch correct event based on active screen
-    if (state.activeScreen == ActiveScreen.underReview) {
+    if (state.activeScreen == ActiveScreen.verified) {
+      emit(state.copyWith(verifiedSearchQuery: event.searchQuery));
+      add(GetVerifiedApplicantsEvent(searchQuery: event.searchQuery));
+    } else if (state.activeScreen == ActiveScreen.underReview) {
       emit(state.copyWith(underReviewSearchQuery: event.searchQuery));
       add(GetUnderReviewApplicantsEvent(searchQuery: event.searchQuery));
     } else {
@@ -180,7 +224,10 @@ class OnboardingQueueBloc
     Emitter<OnboardingQueueState> emit,
   ) {
     // Dispatch correct event based on active screen
-    if (state.activeScreen == ActiveScreen.underReview) {
+    if (state.activeScreen == ActiveScreen.verified) {
+      emit(state.copyWith(verifiedProfessionId: event.professionId));
+      add(GetVerifiedApplicantsEvent(professionId: event.professionId));
+    } else if (state.activeScreen == ActiveScreen.underReview) {
       emit(state.copyWith(underReviewProfessionId: event.professionId));
       add(GetUnderReviewApplicantsEvent(professionId: event.professionId));
     } else {
@@ -196,10 +243,14 @@ class OnboardingQueueBloc
     final ascending = event.ascending;
 
     // Determine which list to sort based on active screen
-    final isUnderReview = state.activeScreen == ActiveScreen.underReview;
-    final sourceList = isUnderReview
-        ? state.underReviewApplicants
-        : state.applicants;
+    List<ApplicantModel> sourceList;
+    if (state.activeScreen == ActiveScreen.verified) {
+      sourceList = state.verifiedApplicants;
+    } else if (state.activeScreen == ActiveScreen.underReview) {
+      sourceList = state.underReviewApplicants;
+    } else {
+      sourceList = state.applicants;
+    }
     final sortedApplicants = List<ApplicantModel>.from(sourceList);
 
     sortedApplicants.sort((a, b) {
@@ -246,7 +297,15 @@ class OnboardingQueueBloc
     });
 
     // Update the correct list and sort state based on active screen
-    if (isUnderReview) {
+    if (state.activeScreen == ActiveScreen.verified) {
+      emit(
+        state.copyWith(
+          verifiedApplicants: sortedApplicants,
+          verifiedSortAscending: ascending,
+          verifiedSortColumnIndex: event.columnIndex,
+        ),
+      );
+    } else if (state.activeScreen == ActiveScreen.underReview) {
       emit(
         state.copyWith(
           underReviewApplicants: sortedApplicants,
@@ -297,6 +356,12 @@ class OnboardingQueueBloc
         selectedApplicantForReview: null, // Explicitly set to null
         professionalTags: state.professionalTags,
         isLoadingProfessionalTags: state.isLoadingProfessionalTags,
+        isVerifiedLoading: state.isVerifiedLoading,
+        verifiedApplicants: state.verifiedApplicants,
+        verifiedSearchQuery: state.verifiedSearchQuery,
+        verifiedProfessionId: state.verifiedProfessionId,
+        verifiedSortAscending: state.verifiedSortAscending,
+        verifiedSortColumnIndex: state.verifiedSortColumnIndex,
       ),
     );
   }
