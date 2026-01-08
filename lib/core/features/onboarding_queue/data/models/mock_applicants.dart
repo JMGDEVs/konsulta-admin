@@ -1,12 +1,13 @@
 // TODO: REMOVE THIS FILE WHEN REAL DATA IS AVAILABLE IN DATABASE
 // This file contains mock data for Under Review screen UI completion
 // Created: 2026-01-07
-// Purpose: Temporary mock data until backend has applicants in "under review" status
+// Updated: 2026-01-08 - Changed to conditional fallback
+// Purpose: Temporary mock data as fallback when API returns empty results
 
 import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applicant_model.dart';
 
-/// Feature flag to enable/disable mock data
-/// Set to false when real data is available in the database
+/// Enable mock data fallback when API returns empty.
+/// When false, shows empty state instead of mock data.
 const bool USE_MOCK_UNDER_REVIEW_DATA = true;
 
 /// Mock applicants data for Under Review screen

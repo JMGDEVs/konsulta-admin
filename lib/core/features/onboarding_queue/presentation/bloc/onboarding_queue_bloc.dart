@@ -92,15 +92,18 @@ class OnboardingQueueBloc
       final searchQuery = event.searchQuery ?? state.underReviewSearchQuery;
       final professionId = event.professionId ?? state.underReviewProfessionId;
 
-      List<ApplicantModel> applicants;
+      // ALWAYS try API first
+      List<ApplicantModel> applicants = await getUnderReviewApplicantsUseCase(
+        searchQuery: searchQuery,
+        professionId: professionId,
+      );
 
-      // TODO: REMOVE MOCK DATA WHEN REAL DATA IS AVAILABLE
-      // Check if mock data should be used
-      if (USE_MOCK_UNDER_REVIEW_DATA) {
-        // Return mock data instead of API call
+      // Fallback to mock data only if API returns empty
+      if (applicants.isEmpty && USE_MOCK_UNDER_REVIEW_DATA) {
+        print('⚠️  API returned empty data, using mock data as fallback');
         applicants = List.from(mockUnderReviewApplicants);
 
-        // Apply search filter if provided
+        // Apply search filter to mock data
         if (searchQuery.isNotEmpty) {
           final lowerQuery = searchQuery.toLowerCase();
           applicants = applicants.where((applicant) {
@@ -110,18 +113,18 @@ class OnboardingQueueBloc
           }).toList();
         }
 
-        // Apply profession filter if provided
+        // Apply profession filter to mock data
         if (professionId != null && professionId.isNotEmpty) {
           applicants = applicants.where((applicant) {
             return applicant.professionalTag == professionId;
           }).toList();
         }
+
+        print('📋 Using ${applicants.length} applicants from mock data');
+      } else if (applicants.isNotEmpty) {
+        print('✅ Using real API data (${applicants.length} applicants)');
       } else {
-        // Original API call (keep this intact)
-        applicants = await getUnderReviewApplicantsUseCase(
-          searchQuery: searchQuery,
-          professionId: professionId,
-        );
+        print('ℹ️  No applicants found (API returned empty, mock data disabled)');
       }
 
       // Default sort: Newest first (descending by created_at)
@@ -223,15 +226,105 @@ class OnboardingQueueBloc
     UpdateProfessionalTagEvent event,
     Emitter<OnboardingQueueState> emit,
   ) {
-    // Dispatch correct event based on active screen
+    // Explicitly set professionId to null (copyWith ?? operator doesn't allow null)
     if (state.activeScreen == ActiveScreen.verified) {
-      emit(state.copyWith(verifiedProfessionId: event.professionId));
+      if (event.professionId == null) {
+        // Explicitly clear the profession filter
+        emit(OnboardingQueueState(
+          isLoading: state.isLoading,
+          applicants: state.applicants,
+          isUnderReviewLoading: state.isUnderReviewLoading,
+          underReviewApplicants: state.underReviewApplicants,
+          errorMessage: state.errorMessage,
+          activeScreen: state.activeScreen,
+          pendingSearchQuery: state.pendingSearchQuery,
+          pendingProfessionId: state.pendingProfessionId,
+          pendingSortAscending: state.pendingSortAscending,
+          pendingSortColumnIndex: state.pendingSortColumnIndex,
+          underReviewSearchQuery: state.underReviewSearchQuery,
+          underReviewProfessionId: state.underReviewProfessionId,
+          underReviewSortAscending: state.underReviewSortAscending,
+          underReviewSortColumnIndex: state.underReviewSortColumnIndex,
+          isReviewLoading: state.isReviewLoading,
+          selectedApplicantForReview: state.selectedApplicantForReview,
+          professionalTags: state.professionalTags,
+          isLoadingProfessionalTags: state.isLoadingProfessionalTags,
+          isVerifiedLoading: state.isVerifiedLoading,
+          verifiedApplicants: state.verifiedApplicants,
+          verifiedSearchQuery: state.verifiedSearchQuery,
+          verifiedProfessionId: null, // Explicitly set to null
+          verifiedSortAscending: state.verifiedSortAscending,
+          verifiedSortColumnIndex: state.verifiedSortColumnIndex,
+        ));
+      } else {
+        emit(state.copyWith(verifiedProfessionId: event.professionId));
+      }
       add(GetVerifiedApplicantsEvent(professionId: event.professionId));
     } else if (state.activeScreen == ActiveScreen.underReview) {
-      emit(state.copyWith(underReviewProfessionId: event.professionId));
+      if (event.professionId == null) {
+        // Explicitly clear the profession filter
+        emit(OnboardingQueueState(
+          isLoading: state.isLoading,
+          applicants: state.applicants,
+          isUnderReviewLoading: state.isUnderReviewLoading,
+          underReviewApplicants: state.underReviewApplicants,
+          errorMessage: state.errorMessage,
+          activeScreen: state.activeScreen,
+          pendingSearchQuery: state.pendingSearchQuery,
+          pendingProfessionId: state.pendingProfessionId,
+          pendingSortAscending: state.pendingSortAscending,
+          pendingSortColumnIndex: state.pendingSortColumnIndex,
+          underReviewSearchQuery: state.underReviewSearchQuery,
+          underReviewProfessionId: null, // Explicitly set to null
+          underReviewSortAscending: state.underReviewSortAscending,
+          underReviewSortColumnIndex: state.underReviewSortColumnIndex,
+          isReviewLoading: state.isReviewLoading,
+          selectedApplicantForReview: state.selectedApplicantForReview,
+          professionalTags: state.professionalTags,
+          isLoadingProfessionalTags: state.isLoadingProfessionalTags,
+          isVerifiedLoading: state.isVerifiedLoading,
+          verifiedApplicants: state.verifiedApplicants,
+          verifiedSearchQuery: state.verifiedSearchQuery,
+          verifiedProfessionId: state.verifiedProfessionId,
+          verifiedSortAscending: state.verifiedSortAscending,
+          verifiedSortColumnIndex: state.verifiedSortColumnIndex,
+        ));
+      } else {
+        emit(state.copyWith(underReviewProfessionId: event.professionId));
+      }
       add(GetUnderReviewApplicantsEvent(professionId: event.professionId));
     } else {
-      emit(state.copyWith(pendingProfessionId: event.professionId));
+      if (event.professionId == null) {
+        // Explicitly clear the profession filter
+        emit(OnboardingQueueState(
+          isLoading: state.isLoading,
+          applicants: state.applicants,
+          isUnderReviewLoading: state.isUnderReviewLoading,
+          underReviewApplicants: state.underReviewApplicants,
+          errorMessage: state.errorMessage,
+          activeScreen: state.activeScreen,
+          pendingSearchQuery: state.pendingSearchQuery,
+          pendingProfessionId: null, // Explicitly set to null
+          pendingSortAscending: state.pendingSortAscending,
+          pendingSortColumnIndex: state.pendingSortColumnIndex,
+          underReviewSearchQuery: state.underReviewSearchQuery,
+          underReviewProfessionId: state.underReviewProfessionId,
+          underReviewSortAscending: state.underReviewSortAscending,
+          underReviewSortColumnIndex: state.underReviewSortColumnIndex,
+          isReviewLoading: state.isReviewLoading,
+          selectedApplicantForReview: state.selectedApplicantForReview,
+          professionalTags: state.professionalTags,
+          isLoadingProfessionalTags: state.isLoadingProfessionalTags,
+          isVerifiedLoading: state.isVerifiedLoading,
+          verifiedApplicants: state.verifiedApplicants,
+          verifiedSearchQuery: state.verifiedSearchQuery,
+          verifiedProfessionId: state.verifiedProfessionId,
+          verifiedSortAscending: state.verifiedSortAscending,
+          verifiedSortColumnIndex: state.verifiedSortColumnIndex,
+        ));
+      } else {
+        emit(state.copyWith(pendingProfessionId: event.professionId));
+      }
       add(GetPendingApplicantsEvent(professionId: event.professionId));
     }
   }

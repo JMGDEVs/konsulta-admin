@@ -79,17 +79,22 @@ class OnboardingQueueService {
       if (adminUserId != null) 'adminUserId': adminUserId,
     };
 
+    // Debug: Print API request params
+    debugPrint('=== Get Under Review Applicants API ===');
+    debugPrint('Query Params: searchQuery=$searchQuery, professionalTag=$professionId');
+
     final result = await api.get(
       ApiPath.getUnderReviewApplicants,
       queryParams: queryParams,
     );
 
-    // Debug: Print API response and status code
-    debugPrint('=== Get Under Review Applicants API ===');
+    // Debug: Print API response
     debugPrint('Status Code: ${result.statusCode}');
     debugPrint('Response Body: ${result.body}');
     debugPrint('Is Success: ${result.isSuccess}');
-    debugPrint('Error Message: ${result.errorMessage}');
+    if (!result.isSuccess) {
+      debugPrint('Error Message: ${result.errorMessage}');
+    }
     debugPrint('========================================');
 
     if (!result.isSuccess) {
@@ -129,7 +134,9 @@ class OnboardingQueueService {
     debugPrint('Status Code: ${result.statusCode}');
     debugPrint('Response Body: ${result.body}');
     debugPrint('Is Success: ${result.isSuccess}');
-    debugPrint('Error Message: ${result.errorMessage}');
+    if (!result.isSuccess) {
+      debugPrint('Error Message: ${result.errorMessage}');
+    }
     debugPrint('==========================');
 
     if (!result.isSuccess) {
@@ -164,7 +171,9 @@ class OnboardingQueueService {
     debugPrint('Status Code: ${result.statusCode}');
     debugPrint('Response Body: ${result.body}');
     debugPrint('Is Success: ${result.isSuccess}');
-    debugPrint('Error Message: ${result.errorMessage}');
+    if (!result.isSuccess) {
+      debugPrint('Error Message: ${result.errorMessage}');
+    }
     debugPrint('====================================');
 
     if (!result.isSuccess) {
@@ -203,7 +212,9 @@ class OnboardingQueueService {
     debugPrint('Status Code: ${result.statusCode}');
     debugPrint('Response Body: ${result.body}');
     debugPrint('Is Success: ${result.isSuccess}');
-    debugPrint('Error Message: ${result.errorMessage}');
+    if (!result.isSuccess) {
+      debugPrint('Error Message: ${result.errorMessage}');
+    }
     debugPrint('==================================');
 
     if (!result.isSuccess) {

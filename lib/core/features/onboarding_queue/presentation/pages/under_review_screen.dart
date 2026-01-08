@@ -9,6 +9,11 @@ import 'package:konsulta_admin/core/service/dependency_injection/injection.dart'
 import 'package:konsulta_admin/core/widgets/layout/layout_container.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+// Sentinel value for "ALL" option in profession dropdown
+// Using a unique string constant instead of null to ensure PopupMenuButton
+// properly triggers onSelected callback when switching between professions and "ALL"
+const String _kAllProfessionsFilter = '__ALL__';
+
 class UnderReviewScreen extends StatelessWidget {
   const UnderReviewScreen({super.key});
 
@@ -36,6 +41,8 @@ class _UnderReviewViewState extends State<UnderReviewView> {
     super.initState();
     // Set active screen to Under Review
     context.read<OnboardingQueueBloc>().add(SetActiveScreenEvent(ActiveScreen.underReview));
+    // Fetch professional tags for dropdown
+    context.read<OnboardingQueueBloc>().add(GetProfessionalTagsEvent());
     // Trigger the event to fetch under review applicants
     context.read<OnboardingQueueBloc>().add(GetUnderReviewApplicantsEvent());
   }
@@ -53,13 +60,12 @@ class _UnderReviewViewState extends State<UnderReviewView> {
         builder: (context, state) {
           // Check if an applicant is selected for review
           if (state.selectedApplicantForReview != null) {
-            // Render ApplicantDetailsView with top padding only to show curved corners
             return _ApplicantDetailsView(
               applicant: state.selectedApplicantForReview!,
             );
           }
 
-          // Otherwise, show the table view with top padding only
+          // Show the table view
           return Container(
             clipBehavior: Clip.antiAlias,
             padding: EdgeInsets.all(24),
@@ -180,8 +186,13 @@ class _UnderReviewViewState extends State<UnderReviewView> {
                 children: [
                   Text(
                     context.select(
-                      (OnboardingQueueBloc bloc) =>
-                        bloc.state.underReviewProfessionId ?? 'Profession',
+                      (OnboardingQueueBloc bloc) {
+                        final profId = bloc.state.underReviewProfessionId;
+                        // Show 'ALL' if professionId is null or equals sentinel value
+                        return (profId == null || profId == _kAllProfessionsFilter)
+                          ? 'ALL'
+                          : profId;
+                      },
                     ),
                     style: GoogleFonts.inter(
                       color: const Color(0xFF000000),
@@ -200,10 +211,15 @@ class _UnderReviewViewState extends State<UnderReviewView> {
               ),
             ),
             itemBuilder: (context) {
-              return ['Doctor', 'Nurse', 'Psychologist', 'Midwife']
+              final state = context.read<OnboardingQueueBloc>().state;
+
+              // Create list with 'ALL' as first option, followed by professional tags
+              final professionOptions = ['ALL', ...state.professionalTags];
+
+              return professionOptions
                   .map(
                     (role) => PopupMenuItem<String>(
-                      value: role,
+                      value: role == 'ALL' ? _kAllProfessionsFilter : role,
                       height: 48,
                       child: Text(
                         role,
@@ -220,53 +236,13 @@ class _UnderReviewViewState extends State<UnderReviewView> {
                   .toList();
             },
             onSelected: (value) {
+              // Convert sentinel value back to null before passing to BLoC
+              // This keeps the business logic unchanged while fixing PopupMenuButton behavior
+              final professionId = (value == _kAllProfessionsFilter) ? null : value;
               context.read<OnboardingQueueBloc>().add(
-                UpdateProfessionalTagEvent(value),
+                UpdateProfessionalTagEvent(professionId),
               );
             },
-          ),
-        ),
-        const SizedBox(width: 16),
-        // Search Button
-        SizedBox(
-          width: 117,
-          height: 45,
-          child: ElevatedButton(
-            onPressed: () {
-              // Search button action
-              context.read<OnboardingQueueBloc>().add(
-                GetUnderReviewApplicantsEvent(),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFC107),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.only(left: 15, right: 20),
-              elevation: 0,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.search,
-                  size: 24,
-                  color: Colors.white,
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  'Search',
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    height: 1.3,
-                    letterSpacing: -0.32,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
         const Spacer(),
@@ -310,7 +286,7 @@ class _UnderReviewViewState extends State<UnderReviewView> {
             ),
           itemBuilder: (context) {
             final state = context.read<OnboardingQueueBloc>().state;
-            // Default check logic: Sort by 'Registered date' (index 7)
+            // Check if sorted by registered date (column 7)
             final isNewest = state.underReviewSortColumnIndex == 7 && !state.underReviewSortAscending;
             final isOldest = state.underReviewSortColumnIndex == 7 && state.underReviewSortAscending;
 
@@ -1205,7 +1181,7 @@ class _ApplicantDetailsView extends StatelessWidget {
               fit: BoxFit.contain,
             ),
           ),
-          const SizedBox(width: 15), // Gap between icon and text
+          const SizedBox(width: 15),
 
           // Filename and size
           Expanded(
