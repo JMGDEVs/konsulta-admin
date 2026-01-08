@@ -229,99 +229,21 @@ class OnboardingQueueBloc
     // Explicitly set professionId to null (copyWith ?? operator doesn't allow null)
     if (state.activeScreen == ActiveScreen.verified) {
       if (event.professionId == null) {
-        // Explicitly clear the profession filter
-        emit(OnboardingQueueState(
-          isLoading: state.isLoading,
-          applicants: state.applicants,
-          isUnderReviewLoading: state.isUnderReviewLoading,
-          underReviewApplicants: state.underReviewApplicants,
-          errorMessage: state.errorMessage,
-          activeScreen: state.activeScreen,
-          pendingSearchQuery: state.pendingSearchQuery,
-          pendingProfessionId: state.pendingProfessionId,
-          pendingSortAscending: state.pendingSortAscending,
-          pendingSortColumnIndex: state.pendingSortColumnIndex,
-          underReviewSearchQuery: state.underReviewSearchQuery,
-          underReviewProfessionId: state.underReviewProfessionId,
-          underReviewSortAscending: state.underReviewSortAscending,
-          underReviewSortColumnIndex: state.underReviewSortColumnIndex,
-          isReviewLoading: state.isReviewLoading,
-          selectedApplicantForReview: state.selectedApplicantForReview,
-          professionalTags: state.professionalTags,
-          isLoadingProfessionalTags: state.isLoadingProfessionalTags,
-          isVerifiedLoading: state.isVerifiedLoading,
-          verifiedApplicants: state.verifiedApplicants,
-          verifiedSearchQuery: state.verifiedSearchQuery,
-          verifiedProfessionId: null, // Explicitly set to null
-          verifiedSortAscending: state.verifiedSortAscending,
-          verifiedSortColumnIndex: state.verifiedSortColumnIndex,
-        ));
+        emit(_copyStateWithNullProfession(nullField: 'verified'));
       } else {
         emit(state.copyWith(verifiedProfessionId: event.professionId));
       }
       add(GetVerifiedApplicantsEvent(professionId: event.professionId));
     } else if (state.activeScreen == ActiveScreen.underReview) {
       if (event.professionId == null) {
-        // Explicitly clear the profession filter
-        emit(OnboardingQueueState(
-          isLoading: state.isLoading,
-          applicants: state.applicants,
-          isUnderReviewLoading: state.isUnderReviewLoading,
-          underReviewApplicants: state.underReviewApplicants,
-          errorMessage: state.errorMessage,
-          activeScreen: state.activeScreen,
-          pendingSearchQuery: state.pendingSearchQuery,
-          pendingProfessionId: state.pendingProfessionId,
-          pendingSortAscending: state.pendingSortAscending,
-          pendingSortColumnIndex: state.pendingSortColumnIndex,
-          underReviewSearchQuery: state.underReviewSearchQuery,
-          underReviewProfessionId: null, // Explicitly set to null
-          underReviewSortAscending: state.underReviewSortAscending,
-          underReviewSortColumnIndex: state.underReviewSortColumnIndex,
-          isReviewLoading: state.isReviewLoading,
-          selectedApplicantForReview: state.selectedApplicantForReview,
-          professionalTags: state.professionalTags,
-          isLoadingProfessionalTags: state.isLoadingProfessionalTags,
-          isVerifiedLoading: state.isVerifiedLoading,
-          verifiedApplicants: state.verifiedApplicants,
-          verifiedSearchQuery: state.verifiedSearchQuery,
-          verifiedProfessionId: state.verifiedProfessionId,
-          verifiedSortAscending: state.verifiedSortAscending,
-          verifiedSortColumnIndex: state.verifiedSortColumnIndex,
-        ));
+        emit(_copyStateWithNullProfession(nullField: 'underReview'));
       } else {
         emit(state.copyWith(underReviewProfessionId: event.professionId));
       }
       add(GetUnderReviewApplicantsEvent(professionId: event.professionId));
     } else {
       if (event.professionId == null) {
-        // Explicitly clear the profession filter
-        emit(OnboardingQueueState(
-          isLoading: state.isLoading,
-          applicants: state.applicants,
-          isUnderReviewLoading: state.isUnderReviewLoading,
-          underReviewApplicants: state.underReviewApplicants,
-          errorMessage: state.errorMessage,
-          activeScreen: state.activeScreen,
-          pendingSearchQuery: state.pendingSearchQuery,
-          pendingProfessionId: null, // Explicitly set to null
-          pendingSortAscending: state.pendingSortAscending,
-          pendingSortColumnIndex: state.pendingSortColumnIndex,
-          underReviewSearchQuery: state.underReviewSearchQuery,
-          underReviewProfessionId: state.underReviewProfessionId,
-          underReviewSortAscending: state.underReviewSortAscending,
-          underReviewSortColumnIndex: state.underReviewSortColumnIndex,
-          isReviewLoading: state.isReviewLoading,
-          selectedApplicantForReview: state.selectedApplicantForReview,
-          professionalTags: state.professionalTags,
-          isLoadingProfessionalTags: state.isLoadingProfessionalTags,
-          isVerifiedLoading: state.isVerifiedLoading,
-          verifiedApplicants: state.verifiedApplicants,
-          verifiedSearchQuery: state.verifiedSearchQuery,
-          verifiedProfessionId: state.verifiedProfessionId,
-          verifiedSortAscending: state.verifiedSortAscending,
-          verifiedSortColumnIndex: state.verifiedSortColumnIndex,
-        ));
+        emit(_copyStateWithNullProfession(nullField: 'pending'));
       } else {
         emit(state.copyWith(pendingProfessionId: event.professionId));
       }
@@ -480,5 +402,41 @@ class OnboardingQueueBloc
         ),
       );
     }
+  }
+
+  /// Helper method to set nullable profession filter to null
+  /// Required because copyWith ?? operator prevents setting fields to null
+  OnboardingQueueState _copyStateWithNullProfession({
+    String? nullField,
+  }) {
+    return OnboardingQueueState(
+      isLoading: state.isLoading,
+      applicants: state.applicants,
+      isUnderReviewLoading: state.isUnderReviewLoading,
+      underReviewApplicants: state.underReviewApplicants,
+      errorMessage: state.errorMessage,
+      activeScreen: state.activeScreen,
+      pendingSearchQuery: state.pendingSearchQuery,
+      pendingProfessionId:
+          nullField == 'pending' ? null : state.pendingProfessionId,
+      pendingSortAscending: state.pendingSortAscending,
+      pendingSortColumnIndex: state.pendingSortColumnIndex,
+      underReviewSearchQuery: state.underReviewSearchQuery,
+      underReviewProfessionId:
+          nullField == 'underReview' ? null : state.underReviewProfessionId,
+      underReviewSortAscending: state.underReviewSortAscending,
+      underReviewSortColumnIndex: state.underReviewSortColumnIndex,
+      isReviewLoading: state.isReviewLoading,
+      selectedApplicantForReview: state.selectedApplicantForReview,
+      professionalTags: state.professionalTags,
+      isLoadingProfessionalTags: state.isLoadingProfessionalTags,
+      isVerifiedLoading: state.isVerifiedLoading,
+      verifiedApplicants: state.verifiedApplicants,
+      verifiedSearchQuery: state.verifiedSearchQuery,
+      verifiedProfessionId:
+          nullField == 'verified' ? null : state.verifiedProfessionId,
+      verifiedSortAscending: state.verifiedSortAscending,
+      verifiedSortColumnIndex: state.verifiedSortColumnIndex,
+    );
   }
 }
