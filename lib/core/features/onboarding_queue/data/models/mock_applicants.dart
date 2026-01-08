@@ -9,6 +9,7 @@ import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applic
 /// Enable mock data fallback when API returns empty.
 /// When false, shows empty state instead of mock data.
 const bool USE_MOCK_UNDER_REVIEW_DATA = true;
+const bool USE_MOCK_REJECTED_DATA = true;
 
 /// Mock applicants data for Under Review screen
 /// Based on Figma design requirements
@@ -117,5 +118,115 @@ final List<ApplicantModel> mockUnderReviewApplicants = [
     gender: 'Female',
     birthDate: '1994-05-10T00:00:00.000Z',
     createdAt: '2025-12-22T17:20:00.000Z',
+  ),
+];
+
+/// Mock applicants data for Rejected screen
+/// Based on Figma design requirements
+final List<ApplicantModel> mockRejectedApplicants = [
+  ApplicantModel(
+    id: 'mock_rejected_001',
+    firstName: 'Peter',
+    middleName: 'Benjamin',
+    lastName: 'Parker',
+    professionalTag: 'Doctor',
+    phone: '09XX92X048X',
+    email: 'peter.parker@gmail.com',
+    verificationStatus: 'Rejected',
+    gender: 'Male',
+    birthDate: '1989-08-10T00:00:00.000Z',
+    createdAt: '2025-11-15T08:30:00.000Z',
+  ),
+  ApplicantModel(
+    id: 'mock_rejected_002',
+    firstName: 'Bruce',
+    middleName: 'Thomas',
+    lastName: 'Wayne',
+    professionalTag: 'Doctor',
+    phone: '09XX92X048X',
+    email: null, // Test null email → displays "---"
+    verificationStatus: 'Rejected',
+    gender: null, // Test null gender → displays "---"
+    birthDate: '1985-02-19T00:00:00.000Z',
+    createdAt: '2025-11-16T09:15:00.000Z',
+  ),
+  ApplicantModel(
+    id: 'mock_rejected_003',
+    firstName: 'Clark',
+    middleName: 'Joseph',
+    lastName: 'Kent',
+    professionalTag: 'Doctor',
+    phone: '09XX92X048X',
+    email: 'clark.kent@dailyplanet.com',
+    verificationStatus: 'Rejected',
+    gender: 'Male',
+    birthDate: '1990-06-18T00:00:00.000Z',
+    createdAt: '2025-11-17T10:45:00.000Z',
+  ),
+  ApplicantModel(
+    id: 'mock_rejected_004',
+    firstName: 'Diana',
+    middleName: 'Grace',
+    lastName: 'Prince',
+    professionalTag: 'Doctor',
+    phone: '09XX92X048X',
+    email: null,
+    verificationStatus: 'Rejected',
+    gender: null,
+    birthDate: '1988-03-22T00:00:00.000Z',
+    createdAt: '2025-11-18T11:20:00.000Z',
+  ),
+  ApplicantModel(
+    id: 'mock_rejected_005',
+    firstName: 'Barry',
+    middleName: 'Henry',
+    lastName: 'Allen',
+    professionalTag: 'Doctor',
+    phone: '09XX92X048X',
+    email: 'barry.allen@starlabs.com',
+    verificationStatus: 'Rejected',
+    gender: 'Male',
+    birthDate: '1992-11-07T00:00:00.000Z',
+    createdAt: '2025-11-19T14:00:00.000Z',
+  ),
+  // Additional diverse mock data for testing filters
+  ApplicantModel(
+    id: 'mock_rejected_006',
+    firstName: 'Natasha',
+    middleName: 'Alianovna',
+    lastName: 'Romanoff',
+    professionalTag: 'Nurse',
+    phone: '09123456789',
+    email: 'natasha.romanoff@shield.gov',
+    verificationStatus: 'Rejected',
+    gender: 'Female',
+    birthDate: '1991-12-03T00:00:00.000Z',
+    createdAt: '2025-11-20T15:30:00.000Z',
+  ),
+  ApplicantModel(
+    id: 'mock_rejected_007',
+    firstName: 'Stephen',
+    middleName: 'Vincent',
+    lastName: 'Strange',
+    professionalTag: 'Psychologist',
+    phone: '09987654321',
+    email: 'dr.strange@sanctum.org',
+    verificationStatus: 'Rejected',
+    gender: 'Male',
+    birthDate: '1986-07-18T00:00:00.000Z',
+    createdAt: '2025-11-21T16:45:00.000Z',
+  ),
+  ApplicantModel(
+    id: 'mock_rejected_008',
+    firstName: 'Wanda',
+    middleName: 'Django',
+    lastName: 'Maximoff',
+    professionalTag: 'Midwife',
+    phone: '09456123789',
+    email: 'wanda.maximoff@avengers.com',
+    verificationStatus: 'Rejected',
+    gender: 'Female',
+    birthDate: '1993-02-10T00:00:00.000Z',
+    createdAt: '2025-11-22T17:20:00.000Z',
   ),
 ];

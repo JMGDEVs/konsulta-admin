@@ -5,6 +5,7 @@ import 'package:konsulta_admin/core/features/onboarding_queue/data/models/mock_a
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_pending_applicants_usecase.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_under_review_applicants_usecase.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_verified_applicants_usecase.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_rejected_applicants_usecase.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/start_review_usecase.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_professional_tags_usecase.dart';
 
@@ -17,6 +18,7 @@ class OnboardingQueueBloc
   final GetPendingApplicantsUseCase getPendingApplicantsUseCase;
   final GetUnderReviewApplicantsUseCase getUnderReviewApplicantsUseCase;
   final GetVerifiedApplicantsUseCase getVerifiedApplicantsUseCase;
+  final GetRejectedApplicantsUseCase getRejectedApplicantsUseCase;
   final StartReviewUseCase startReviewUseCase;
   final GetProfessionalTagsUseCase getProfessionalTagsUseCase;
 
@@ -24,6 +26,7 @@ class OnboardingQueueBloc
     this.getPendingApplicantsUseCase,
     this.getUnderReviewApplicantsUseCase,
     this.getVerifiedApplicantsUseCase,
+    this.getRejectedApplicantsUseCase,
     this.startReviewUseCase,
     this.getProfessionalTagsUseCase,
   ) : super(OnboardingQueueState()) {
@@ -31,6 +34,7 @@ class OnboardingQueueBloc
     on<GetPendingApplicantsEvent>(_onGetPendingApplicants);
     on<GetUnderReviewApplicantsEvent>(_onGetUnderReviewApplicants);
     on<GetVerifiedApplicantsEvent>(_onGetVerifiedApplicants);
+    on<GetRejectedApplicantsEvent>(_onGetRejectedApplicants);
     on<StartReviewEvent>(_onStartReview);
     on<UpdateSearchEvent>(_onUpdateSearch);
     on<UpdateProfessionalTagEvent>(_onUpdateProfessionalTag);
@@ -186,6 +190,73 @@ class OnboardingQueueBloc
     }
   }
 
+  Future<void> _onGetRejectedApplicants(
+    GetRejectedApplicantsEvent event,
+    Emitter<OnboardingQueueState> emit,
+  ) async {
+    emit(state.copyWith(isRejectedLoading: true, errorMessage: null));
+
+    try {
+      final searchQuery = event.searchQuery ?? state.rejectedSearchQuery;
+      final professionId = event.professionId ?? state.rejectedProfessionId;
+
+      // ALWAYS try API first
+      List<ApplicantModel> applicants = await getRejectedApplicantsUseCase(
+        searchQuery: searchQuery,
+        professionId: professionId,
+      );
+
+      // Fallback to mock data only if API returns empty
+      if (applicants.isEmpty && USE_MOCK_REJECTED_DATA) {
+        print('⚠️  API returned empty data, using mock data as fallback');
+        applicants = List.from(mockRejectedApplicants);
+
+        // Apply search filter to mock data
+        if (searchQuery.isNotEmpty) {
+          final lowerQuery = searchQuery.toLowerCase();
+          applicants = applicants.where((applicant) {
+            return applicant.fullName.toLowerCase().contains(lowerQuery) ||
+                (applicant.phone ?? '').contains(lowerQuery) ||
+                (applicant.email ?? '').toLowerCase().contains(lowerQuery);
+          }).toList();
+        }
+
+        // Apply profession filter to mock data
+        if (professionId != null && professionId.isNotEmpty) {
+          applicants = applicants.where((applicant) {
+            return applicant.professionalTag == professionId;
+          }).toList();
+        }
+
+        print('📋 Using ${applicants.length} applicants from mock data');
+      } else if (applicants.isNotEmpty) {
+        print('✅ Using real API data (${applicants.length} applicants)');
+      } else {
+        print('ℹ️  No applicants found (API returned empty, mock data disabled)');
+      }
+
+      // Default sort: Newest first (descending by created_at)
+      applicants.sort((a, b) {
+        final dateA = DateTime.tryParse(a.createdAt ?? '') ?? DateTime(0);
+        final dateB = DateTime.tryParse(b.createdAt ?? '') ?? DateTime(0);
+        return dateB.compareTo(dateA);
+      });
+
+      emit(
+        state.copyWith(
+          isRejectedLoading: false,
+          rejectedApplicants: applicants,
+          rejectedSearchQuery: searchQuery,
+          rejectedProfessionId: professionId,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(isRejectedLoading: false, errorMessage: e.toString()),
+      );
+    }
+  }
+
   Future<void> _onStartReview(
     StartReviewEvent event,
     Emitter<OnboardingQueueState> emit,
@@ -216,6 +287,9 @@ class OnboardingQueueBloc
     } else if (state.activeScreen == ActiveScreen.underReview) {
       emit(state.copyWith(underReviewSearchQuery: event.searchQuery));
       add(GetUnderReviewApplicantsEvent(searchQuery: event.searchQuery));
+    } else if (state.activeScreen == ActiveScreen.rejected) {
+      emit(state.copyWith(rejectedSearchQuery: event.searchQuery));
+      add(GetRejectedApplicantsEvent(searchQuery: event.searchQuery));
     } else {
       emit(state.copyWith(pendingSearchQuery: event.searchQuery));
       add(GetPendingApplicantsEvent(searchQuery: event.searchQuery));
@@ -241,6 +315,13 @@ class OnboardingQueueBloc
         emit(state.copyWith(underReviewProfessionId: event.professionId));
       }
       add(GetUnderReviewApplicantsEvent(professionId: event.professionId));
+    } else if (state.activeScreen == ActiveScreen.rejected) {
+      if (event.professionId == null) {
+        emit(_copyStateWithNullProfession(nullField: 'rejected'));
+      } else {
+        emit(state.copyWith(rejectedProfessionId: event.professionId));
+      }
+      add(GetRejectedApplicantsEvent(professionId: event.professionId));
     } else {
       if (event.professionId == null) {
         emit(_copyStateWithNullProfession(nullField: 'pending'));
@@ -263,6 +344,8 @@ class OnboardingQueueBloc
       sourceList = state.verifiedApplicants;
     } else if (state.activeScreen == ActiveScreen.underReview) {
       sourceList = state.underReviewApplicants;
+    } else if (state.activeScreen == ActiveScreen.rejected) {
+      sourceList = state.rejectedApplicants;
     } else {
       sourceList = state.applicants;
     }
@@ -328,6 +411,14 @@ class OnboardingQueueBloc
           underReviewSortColumnIndex: event.columnIndex,
         ),
       );
+    } else if (state.activeScreen == ActiveScreen.rejected) {
+      emit(
+        state.copyWith(
+          rejectedApplicants: sortedApplicants,
+          rejectedSortAscending: ascending,
+          rejectedSortColumnIndex: event.columnIndex,
+        ),
+      );
     } else {
       emit(
         state.copyWith(
@@ -377,6 +468,12 @@ class OnboardingQueueBloc
         verifiedProfessionId: state.verifiedProfessionId,
         verifiedSortAscending: state.verifiedSortAscending,
         verifiedSortColumnIndex: state.verifiedSortColumnIndex,
+        isRejectedLoading: state.isRejectedLoading,
+        rejectedApplicants: state.rejectedApplicants,
+        rejectedSearchQuery: state.rejectedSearchQuery,
+        rejectedProfessionId: state.rejectedProfessionId,
+        rejectedSortAscending: state.rejectedSortAscending,
+        rejectedSortColumnIndex: state.rejectedSortColumnIndex,
       ),
     );
   }
@@ -437,6 +534,13 @@ class OnboardingQueueBloc
           nullField == 'verified' ? null : state.verifiedProfessionId,
       verifiedSortAscending: state.verifiedSortAscending,
       verifiedSortColumnIndex: state.verifiedSortColumnIndex,
+      isRejectedLoading: state.isRejectedLoading,
+      rejectedApplicants: state.rejectedApplicants,
+      rejectedSearchQuery: state.rejectedSearchQuery,
+      rejectedProfessionId:
+          nullField == 'rejected' ? null : state.rejectedProfessionId,
+      rejectedSortAscending: state.rejectedSortAscending,
+      rejectedSortColumnIndex: state.rejectedSortColumnIndex,
     );
   }
 }

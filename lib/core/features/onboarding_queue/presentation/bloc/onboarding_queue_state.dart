@@ -30,6 +30,14 @@ class OnboardingQueueState {
   final bool isVerifiedLoading;
   final List<ApplicantModel> verifiedApplicants;
 
+  // Rejected Applications filter state
+  final String rejectedSearchQuery;
+  final String? rejectedProfessionId;
+  final bool rejectedSortAscending;
+  final int rejectedSortColumnIndex;
+  final bool isRejectedLoading;
+  final List<ApplicantModel> rejectedApplicants;
+
   final bool isReviewLoading;
 
   // Selected applicant for detail view
@@ -64,6 +72,12 @@ class OnboardingQueueState {
     this.verifiedSortColumnIndex = 7,
     this.isVerifiedLoading = false,
     this.verifiedApplicants = const [],
+    this.rejectedSearchQuery = '',
+    this.rejectedProfessionId,
+    this.rejectedSortAscending = false,
+    this.rejectedSortColumnIndex = 7,
+    this.isRejectedLoading = false,
+    this.rejectedApplicants = const [],
   });
 
   OnboardingQueueState copyWith({
@@ -91,6 +105,12 @@ class OnboardingQueueState {
     int? verifiedSortColumnIndex,
     bool? isVerifiedLoading,
     List<ApplicantModel>? verifiedApplicants,
+    String? rejectedSearchQuery,
+    String? rejectedProfessionId,
+    bool? rejectedSortAscending,
+    int? rejectedSortColumnIndex,
+    bool? isRejectedLoading,
+    List<ApplicantModel>? rejectedApplicants,
   }) {
     return OnboardingQueueState(
       isLoading: isLoading ?? this.isLoading,
@@ -127,6 +147,14 @@ class OnboardingQueueState {
           verifiedSortColumnIndex ?? this.verifiedSortColumnIndex,
       isVerifiedLoading: isVerifiedLoading ?? this.isVerifiedLoading,
       verifiedApplicants: verifiedApplicants ?? this.verifiedApplicants,
+      rejectedSearchQuery: rejectedSearchQuery ?? this.rejectedSearchQuery,
+      rejectedProfessionId: rejectedProfessionId ?? this.rejectedProfessionId,
+      rejectedSortAscending:
+          rejectedSortAscending ?? this.rejectedSortAscending,
+      rejectedSortColumnIndex:
+          rejectedSortColumnIndex ?? this.rejectedSortColumnIndex,
+      isRejectedLoading: isRejectedLoading ?? this.isRejectedLoading,
+      rejectedApplicants: rejectedApplicants ?? this.rejectedApplicants,
     );
   }
 }

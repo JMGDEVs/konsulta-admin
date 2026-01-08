@@ -167,6 +167,62 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
   }
 
   @override
+  Future<List<ApplicantModel>> getRejectedApplicants({
+    String? searchQuery,
+    String? professionId,
+    int? adminUserId,
+  }) async {
+    final queryParams = {
+      if (searchQuery != null && searchQuery.isNotEmpty)
+        'searchQuery': searchQuery,
+      if (professionId != null && professionId.isNotEmpty)
+        'professionalTag': professionId,
+      if (adminUserId != null) 'adminUserId': adminUserId,
+    };
+
+    debugPrint('=== Get Rejected Applicants API ===');
+    debugPrint('Query Params: searchQuery=$searchQuery, professionalTag=$professionId');
+
+    final result = await _api.get(
+      ApiPath.getRejectedApplicants,
+      queryParams: queryParams,
+    );
+
+    debugPrint('Status Code: ${result.statusCode}');
+    debugPrint('Response Body: ${result.body}');
+    debugPrint('Is Success: ${result.isSuccess}');
+    if (!result.isSuccess) {
+      debugPrint('Error Message: ${result.errorMessage}');
+    }
+    debugPrint('========================================');
+
+    if (!result.isSuccess) {
+      throw Exception(result.errorMessage);
+    }
+
+    final data = result.data;
+    List<dynamic> applicants;
+
+    // Handle multiple API response formats: {data: {applicants: []}} or direct []
+    if (data is Map && data.containsKey('data')) {
+      final dataObj = data['data'];
+      if (dataObj is Map && dataObj.containsKey('applicants')) {
+        applicants = dataObj['applicants'] as List<dynamic>;
+      } else if (dataObj is List) {
+        applicants = dataObj as List<dynamic>;
+      } else {
+        applicants = [];
+      }
+    } else if (data is List) {
+      applicants = data as List<dynamic>;
+    } else {
+      applicants = [];
+    }
+
+    return applicants.map((json) => ApplicantModel.fromJson(json)).toList();
+  }
+
+  @override
   Future<bool> startReview(String applicantId) async {
     final result = await _api.post(
       ApiPath.startReview,

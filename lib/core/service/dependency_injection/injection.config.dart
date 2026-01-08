@@ -27,6 +27,8 @@ import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/ge
     as _i844;
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_professional_tags_usecase.dart'
     as _i983;
+import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_rejected_applicants_usecase.dart'
+    as _i752;
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_under_review_applicants_usecase.dart'
     as _i361;
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_verified_applicants_usecase.dart'
@@ -74,6 +76,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i209.OnboardingQueueRepository>(),
       ),
     );
+    gh.lazySingleton<_i752.GetRejectedApplicantsUseCase>(
+      () => _i752.GetRejectedApplicantsUseCase(
+        gh<_i209.OnboardingQueueRepository>(),
+      ),
+    );
     gh.lazySingleton<_i361.GetUnderReviewApplicantsUseCase>(
       () => _i361.GetUnderReviewApplicantsUseCase(
         gh<_i209.OnboardingQueueRepository>(),
@@ -95,6 +102,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i844.GetPendingApplicantsUseCase>(),
         gh<_i361.GetUnderReviewApplicantsUseCase>(),
         gh<_i666.GetVerifiedApplicantsUseCase>(),
+        gh<_i752.GetRejectedApplicantsUseCase>(),
         gh<_i556.StartReviewUseCase>(),
         gh<_i983.GetProfessionalTagsUseCase>(),
       ),

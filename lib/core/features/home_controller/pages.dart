@@ -4,6 +4,7 @@ import 'package:konsulta_admin/core/features/dashboard/dashboard_layout.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/pending_applications_screen.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/under_review_screen.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/verified_applications_screen.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/rejected_applications_screen.dart';
 
 List<Widget> pages = [
   // home PARENT (Index 0)
@@ -22,7 +23,7 @@ List<Widget> pages = [
   const VerifiedApplicationsScreen(),
 
   // Rejected (Index 5)
-  const Center(child: Text('Rejected Screen')),
+  const RejectedApplicationsScreen(),
 ];
 
 final List<Map<String, dynamic>> menuItems = [
