@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applicant_model.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/under_review/utils/date_formatters.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 /// Table widget for displaying Under Review applicants
 ///
@@ -204,23 +203,29 @@ class UnderReviewTable extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.black, width: 1.5),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
-                              Symbols.exit_to_app,
-                              size: 16,
-                              color: Colors.black,
+                            SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: Image.asset(
+                                'assets/icons/material-symbols_preview.png',
+                                width: 18,
+                                height: 18,
+                              ),
                             ),
                             const SizedBox(width: 4),
                             Text(
                               'Review',
                               style: GoogleFonts.inter(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                height: 1.3,
+                                letterSpacing: -0.28,
                                 color: Colors.black,
                               ),
                             ),
