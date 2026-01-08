@@ -48,26 +48,32 @@ class _UnderReviewViewState extends State<UnderReviewView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: BlocBuilder<OnboardingQueueBloc, OnboardingQueueState>(
-          builder: (context, state) {
-            // Check if an applicant is selected for review
-            if (state.selectedApplicantForReview != null) {
-              // Render ApplicantDetailsView directly without Card wrapper
-              return _ApplicantDetailsView(
+      backgroundColor: Colors.black,
+      body: BlocBuilder<OnboardingQueueBloc, OnboardingQueueState>(
+        builder: (context, state) {
+          // Check if an applicant is selected for review
+          if (state.selectedApplicantForReview != null) {
+            // Render ApplicantDetailsView with top padding only to show curved corners
+            return Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child: _ApplicantDetailsView(
                 applicant: state.selectedApplicantForReview!,
-              );
-            }
-
-            // Otherwise, show the table view with Card wrapper
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
               ),
-              elevation: 0.5,
-              color: Colors.white,
+            );
+          }
+
+          // Otherwise, show the table view with top padding only
+          return Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -96,9 +102,9 @@ class _UnderReviewViewState extends State<UnderReviewView> {
                   ],
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -591,9 +597,13 @@ class _ApplicantDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
