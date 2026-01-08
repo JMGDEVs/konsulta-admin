@@ -51,25 +51,26 @@ class _UnderReviewViewState extends State<UnderReviewView> {
       backgroundColor: Colors.grey.shade100,
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 0.5,
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: BlocBuilder<OnboardingQueueBloc, OnboardingQueueState>(
-              builder: (context, state) {
-                // Check if an applicant is selected for review
-                if (state.selectedApplicantForReview != null) {
-                  return _ApplicantDetailsView(
-                    applicant: state.selectedApplicantForReview!,
-                  );
-                }
+        child: BlocBuilder<OnboardingQueueBloc, OnboardingQueueState>(
+          builder: (context, state) {
+            // Check if an applicant is selected for review
+            if (state.selectedApplicantForReview != null) {
+              // Render ApplicantDetailsView directly without Card wrapper
+              return _ApplicantDetailsView(
+                applicant: state.selectedApplicantForReview!,
+              );
+            }
 
-                // Otherwise, show the table view
-                return Column(
+            // Otherwise, show the table view with Card wrapper
+            return Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0.5,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -93,10 +94,10 @@ class _UnderReviewViewState extends State<UnderReviewView> {
                     const SizedBox(height: 24),
                     Expanded(child: _buildTable(context)),
                   ],
-                );
-              },
-            ),
-          ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -590,7 +591,10 @@ class _ApplicantDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFFF5F5F5),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -598,7 +602,7 @@ class _ApplicantDetailsView extends StatelessWidget {
         Row(
           children: [
             Container(
-              margin: const EdgeInsets.only(left: 176.0, top: 16.0),
+              margin: const EdgeInsets.only(left: 80.0, top: 16.0),
               child: SizedBox(
                 width: 32,
                 height: 32,
@@ -620,7 +624,7 @@ class _ApplicantDetailsView extends StatelessWidget {
             ),
             const Spacer(),
             Container(
-              margin: const EdgeInsets.only(right: 176.0, top: 16.0),
+              margin: const EdgeInsets.only(right: 80.0, top: 16.0),
               child: SizedBox(
                 width: 170,
                 height: 50,
@@ -663,7 +667,7 @@ class _ApplicantDetailsView extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Container(
-                  margin: const EdgeInsets.only(left: 176.0),
+                  margin: const EdgeInsets.only(left: 80.0),
                   height: 526,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -746,7 +750,7 @@ class _ApplicantDetailsView extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 23), // Gap between columns
+              const SizedBox(width: 48), // Gap between columns
 
               // Right Column - Document Cards
               Expanded(
@@ -756,7 +760,7 @@ class _ApplicantDetailsView extends StatelessWidget {
                     children: [
                       // Government ID Card
                       Container(
-                        margin: const EdgeInsets.only(right: 176.0),
+                        margin: const EdgeInsets.only(right: 80.0),
                         height: 420,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -904,7 +908,7 @@ class _ApplicantDetailsView extends StatelessWidget {
 
                       // Professional ID Card
                       Container(
-                        margin: const EdgeInsets.only(right: 176.0),
+                        margin: const EdgeInsets.only(right: 80.0),
                         height: 420,
                         decoration: BoxDecoration(
                           color: Colors.white,
