@@ -787,7 +787,7 @@ class _ApplicantDetailsView extends StatelessWidget {
                               const SizedBox(height: 10),
                               _buildFileItem('GovernmentIdforkonsultagroup.png', '5.3 mb'),
 
-                              const SizedBox(height: 25),
+                              const SizedBox(height: 21),
 
                               // Divider line
                               Container(
@@ -846,7 +846,7 @@ class _ApplicantDetailsView extends StatelessWidget {
                                   // Approve button
                                   Expanded(
                                     child: SizedBox(
-                                      height: 50,
+                                      height: 54,
                                       child: ElevatedButton(
                                         onPressed: () => _handleApproveGovernmentId(context),
                                         style: ElevatedButton.styleFrom(
@@ -935,7 +935,7 @@ class _ApplicantDetailsView extends StatelessWidget {
                               const SizedBox(height: 10),
                               _buildFileItem('ProfessionalIDforkonsultagroup.png', '5.3 mb'),
 
-                              const SizedBox(height: 25),
+                              const SizedBox(height: 21),
 
                               // Divider line
                               Container(
@@ -994,7 +994,7 @@ class _ApplicantDetailsView extends StatelessWidget {
                                   // Approve button
                                   Expanded(
                                     child: SizedBox(
-                                      height: 50,
+                                      height: 54,
                                       child: ElevatedButton(
                                         onPressed: () => _handleApproveProfessionalId(context),
                                         style: ElevatedButton.styleFrom(
