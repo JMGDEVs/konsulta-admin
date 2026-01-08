@@ -9,13 +9,13 @@ class GetUnderReviewApplicantsUseCase {
   GetUnderReviewApplicantsUseCase(this._repository);
 
   Future<List<ApplicantModel>> call({
-    String? search,
-    String? professionalTag,
+    String? searchQuery,
+    String? professionId,
     int? adminUserId,
   }) {
     return _repository.getUnderReviewApplicants(
-      search: search,
-      professionalTag: professionalTag,
+      searchQuery: searchQuery,
+      professionId: professionId,
       adminUserId: adminUserId,
     );
   }

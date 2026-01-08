@@ -11,24 +11,24 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
 
   @override
   Future<List<ApplicantModel>> getPendingApplicants({
-    String? search,
-    String? professionalTag,
+    String? searchQuery,
+    String? professionId,
   }) {
     return _service.getPendingApplicants(
-      search: search,
-      professionalTag: professionalTag,
+      searchQuery: searchQuery,
+      professionId: professionId,
     );
   }
 
   @override
   Future<List<ApplicantModel>> getUnderReviewApplicants({
-    String? search,
-    String? professionalTag,
+    String? searchQuery,
+    String? professionId,
     int? adminUserId,
   }) {
     return _service.getUnderReviewApplicants(
-      search: search,
-      professionalTag: professionalTag,
+      searchQuery: searchQuery,
+      professionId: professionId,
       adminUserId: adminUserId,
     );
   }
@@ -36,5 +36,10 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
   @override
   Future<bool> startReview(String applicantId) {
     return _service.startReview(applicantId);
+  }
+
+  @override
+  Future<List<String>> getProfessionalTags() {
+    return _service.getProfessionalTags();
   }
 }

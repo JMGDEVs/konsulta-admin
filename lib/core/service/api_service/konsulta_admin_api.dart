@@ -17,9 +17,7 @@ class KonsultaProApi {
   final Config config;
   final http.Client client;
 
-  KonsultaProApi(
-    @Named('devConfig') this.config,
-  ) : client = http.Client();
+  KonsultaProApi(@Named('devConfig') this.config) : client = http.Client();
 
   /// Generic request handler with standardized error handling.
   Future<APIResult> _sendRequest(
@@ -27,8 +25,9 @@ class KonsultaProApi {
     int timeoutSeconds = _defaultTimeoutSeconds,
   }) async {
     try {
-      final response =
-          await requestFn().timeout(Duration(seconds: timeoutSeconds));
+      final response = await requestFn().timeout(
+        Duration(seconds: timeoutSeconds),
+      );
       final body = response.body.isNotEmpty ? response.body : '';
       final status = response.statusCode;
 
@@ -47,8 +46,10 @@ class KonsultaProApi {
   }
 
   /// Builds the complete API URI.
-  Future<Uri> _buildUri(String path,
-      {Map<String, dynamic>? queryParams}) async {
+  Future<Uri> _buildUri(
+    String path, {
+    Map<String, dynamic>? queryParams,
+  }) async {
     if (!path.startsWith('/')) path = '/$path';
 
     final storage = FlutterSecureStorage();
@@ -112,11 +113,9 @@ class KonsultaProApi {
     final headers = {...await _headers(), ...?customHeaders};
     final uri = await _buildUri(path, queryParams: queryParams);
 
-    return _sendRequest(() => client.post(
-          uri,
-          headers: headers,
-          body: jsonEncode(body ?? {}),
-        ));
+    return _sendRequest(
+      () => client.post(uri, headers: headers, body: jsonEncode(body ?? {})),
+    );
   }
 
   Future<APIResult> put(
@@ -128,11 +127,9 @@ class KonsultaProApi {
     final headers = {...await _headers(), ...?customHeaders};
     final uri = await _buildUri(path, queryParams: queryParams);
 
-    return _sendRequest(() => client.put(
-          uri,
-          headers: headers,
-          body: jsonEncode(body ?? {}),
-        ));
+    return _sendRequest(
+      () => client.put(uri, headers: headers, body: jsonEncode(body ?? {})),
+    );
   }
 
   Future<APIResult> delete(
@@ -144,10 +141,7 @@ class KonsultaProApi {
     final headers = {...await _headers(), ...?customHeaders};
     final uri = await _buildUri(path, queryParams: queryParams);
 
-    return _sendRequest(() => client.delete(
-          uri,
-          headers: headers,
-        ));
+    return _sendRequest(() => client.delete(uri, headers: headers));
   }
 
   // for image
@@ -195,13 +189,12 @@ class KonsultaProApi {
     for (int i = 0; i < files.length; i++) {
       final file = files[i];
       final fileName = file.path.split('/').last;
-      
+
       // Verify file exists and is readable
       if (!await file.exists()) {
         throw Exception('File does not exist: ${file.path}');
       }
-      
-      
+
       // Determine content type based on file extension
       String? contentType;
       final extension = fileName.toLowerCase().split('.').last;
@@ -219,18 +212,21 @@ class KonsultaProApi {
         default:
           contentType = 'application/octet-stream';
       }
-      
-      request.files.add(await http.MultipartFile.fromPath(
-        fileFieldName,
-        file.path,
-        filename: fileName,
-        contentType: MediaType.parse(contentType),
-      ));
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          fileFieldName,
+          file.path,
+          filename: fileName,
+          contentType: MediaType.parse(contentType),
+        ),
+      );
     }
 
     try {
-      final streamedResponse =
-          await request.send().timeout(Duration(seconds: timeoutSeconds));
+      final streamedResponse = await request.send().timeout(
+        Duration(seconds: timeoutSeconds),
+      );
       final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode >= 400) {
@@ -287,17 +283,21 @@ class APIResult {
           .join('\n');
     }
     // Try multiple possible error field names
-    final message = data['message']?.toString()
-        ?? data['error']?.toString()
-        ?? data['msg']?.toString()
-        ?? data['errors']?.toString()
-        ?? 'An unknown error occurred.';
+    final message =
+        data['message']?.toString() ??
+        data['error']?.toString() ??
+        data['msg']?.toString() ??
+        data['errors']?.toString() ??
+        'An unknown error occurred.';
     // Include status code and raw response for debugging
     return '$message (Status: $statusCode, Response: ${data.toString()})';
   }
 
   factory APIResult.success(String body, int statusCode) => APIResult(
-      type: APIResultType.success, body: body, statusCode: statusCode);
+    type: APIResultType.success,
+    body: body,
+    statusCode: statusCode,
+  );
 
   factory APIResult.error(String body, int statusCode) =>
       APIResult(type: APIResultType.error, body: body, statusCode: statusCode);
@@ -311,10 +311,4 @@ class APIResult {
       APIResult(type: APIResultType.unauthorized);
 }
 
-enum APIResultType {
-  success,
-  connectionProblem,
-  timeout,
-  unauthorized,
-  error,
-}
+enum APIResultType { success, connectionProblem, timeout, unauthorized, error }

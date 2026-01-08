@@ -38,9 +38,13 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
   void initState() {
     super.initState();
     // Set active screen to Pending
-    context.read<OnboardingQueueBloc>().add(SetActiveScreenEvent(ActiveScreen.pending));
+    context.read<OnboardingQueueBloc>().add(
+      SetActiveScreenEvent(ActiveScreen.pending),
+    );
     // Trigger the event to fetch pending applicants
     context.read<OnboardingQueueBloc>().add(GetPendingApplicantsEvent());
+    // Fetch professional tags from API
+    context.read<OnboardingQueueBloc>().add(GetProfessionalTagsEvent());
   }
 
   @override
@@ -52,39 +56,34 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
         ),
-        elevation: 0.5,
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Pending Applications',
-                style: GoogleFonts.inter(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Pending Applications',
+              style: GoogleFonts.inter(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Select an application to move it under your review',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 24),
-              _buildFilters(context),
-              const SizedBox(height: 24),
-              Expanded(child: _buildTable(context)),
-            ],
-          ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Select an application to move it under your review',
+              style: GoogleFonts.inter(fontSize: 14, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 24),
+            _buildFilters(context),
+            const SizedBox(height: 24),
+            Expanded(child: _buildTable(context)),
+          ],
         ),
       ),
     );
@@ -95,164 +94,236 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
       children: [
         // Search Bar
         SizedBox(
-          width: 300,
+          width: 400,
+          height: 45,
           child: TextField(
             controller: _searchController,
             onChanged: (value) {
               // Immediate update as requested
               context.read<OnboardingQueueBloc>().add(UpdateSearchEvent(value));
             },
-            // Removed search button as per task requirements
             decoration: InputDecoration(
               hintText: 'Search name, number, or email...',
-              hintStyle: GoogleFonts.inter(color: Colors.black, fontSize: 14),
-
+              hintStyle: GoogleFonts.inter(
+                color: const Color(0xFF000000),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                height: 1.3,
+                letterSpacing: -0.32,
+              ),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFD9D9D9)),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFD9D9D9)),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
                 borderSide: const BorderSide(color: Colors.black),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 vertical: 0,
-                horizontal: 12,
+                horizontal: 20,
               ),
             ),
-            style: GoogleFonts.inter(fontSize: 14),
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              height: 1.3,
+              letterSpacing: -0.32,
+              color: const Color(0xFF000000),
+            ),
           ),
         ),
         const SizedBox(width: 16),
         // Profession Dropdown
-        Container(
-          width: 180,
-          height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.white,
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              isExpanded: true,
-              hint: Text(
-                'Profession',
-                style: GoogleFonts.inter(color: Colors.black, fontSize: 14),
+        BlocBuilder<OnboardingQueueBloc, OnboardingQueueState>(
+          builder: (context, state) {
+            return SizedBox(
+              width: 254,
+              height: 45,
+              child: PopupMenuButton<String>(
+                offset: const Offset(0, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: const BorderSide(color: Color(0xFFD9D9D9)),
+                ),
+                color: Colors.white,
+                elevation: 8,
+                constraints: const BoxConstraints(minWidth: 254),
+                child: Container(
+                  width: 254,
+                  height: 45,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xFFD9D9D9)),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        state.pendingProfessionId ?? 'Profession',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF000000),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          height: 1.3,
+                          letterSpacing: -0.32,
+                        ),
+                      ),
+                      const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.black,
+                        size: 24,
+                      ),
+                    ],
+                  ),
+                ),
+                itemBuilder: (context) {
+                  return state.professionalTags
+                      .map(
+                        (tag) => PopupMenuItem<String>(
+                          value: tag,
+                          height: 48,
+                          child: Text(
+                            tag,
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              height: 1.3,
+                              letterSpacing: -0.32,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList();
+                },
+                onSelected: (value) {
+                  context.read<OnboardingQueueBloc>().add(
+                    UpdateProfessionalTagEvent(value),
+                  );
+                },
               ),
-              value: context.select(
-                (OnboardingQueueBloc bloc) => bloc.state.pendingProfessionId,
-              ),
-              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black),
-              items: ['Doctor', 'Nurse', 'Psychologist', 'Midwife']
-                  .map(
-                    (role) => DropdownMenuItem(
-                      value: role,
-                      child: Text(role, style: GoogleFonts.inter(fontSize: 14)),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                context.read<OnboardingQueueBloc>().add(
-                  UpdateProfessionalTagEvent(value),
-                );
-              },
-            ),
-          ),
+            );
+          },
         ),
         const Spacer(),
         // Sort By Button
-        PopupMenuButton<bool>(
-          offset: const Offset(0, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.grey.shade200),
-          ),
-          color: Colors.white,
-          child: Container(
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(8),
+        SizedBox(
+          width: 117,
+          height: 45,
+          child: PopupMenuButton<bool>(
+            offset: const Offset(0, 50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: Colors.grey.shade200),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Symbols.sort, size: 20, color: Colors.black),
-                const SizedBox(width: 8),
-                Text(
-                  'Sort by',
-                  style: GoogleFonts.inter(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+            color: Colors.white,
+            elevation: 4,
+            padding: const EdgeInsets.only(top: 20, bottom: 20),
+            child: Container(
+              height: 45,
+              padding: const EdgeInsets.only(left: 15, right: 18),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE9E9E9),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Symbols.sort, size: 24, color: Colors.black),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Sort by',
+                    style: GoogleFonts.inter(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      height: 1.3,
+                      letterSpacing: -0.32,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            itemBuilder: (context) {
+              final state = context.read<OnboardingQueueBloc>().state;
+              // Default check logic: Sort by 'Registered date' (index 7)
+              final isNewest =
+                  state.pendingSortColumnIndex == 7 &&
+                  !state.pendingSortAscending;
+              final isOldest =
+                  state.pendingSortColumnIndex == 7 &&
+                  state.pendingSortAscending;
+
+              return [
+                PopupMenuItem(
+                  value: false, // Newest
+                  height: 40,
+                  child: Row(
+                    children: [
+                      Icon(
+                        isNewest
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_unchecked,
+                        size: 24,
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Updated (Newest)',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          height: 1.3,
+                          letterSpacing: -0.32,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+                PopupMenuItem(
+                  value: true, // Oldest
+                  height: 40,
+                  child: Row(
+                    children: [
+                      Icon(
+                        isOldest
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_unchecked,
+                        size: 24,
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Updated (Oldest)',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          height: 1.3,
+                          letterSpacing: -0.32,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ];
+            },
+            onSelected: (ascending) {
+              context.read<OnboardingQueueBloc>().add(
+                SortApplicantsEvent(ascending, 7),
+              );
+            },
           ),
-          itemBuilder: (context) {
-            final state = context.read<OnboardingQueueBloc>().state;
-            // Default check logic: Sort by 'Registered date' (index 7)
-            final isNewest = state.pendingSortColumnIndex == 7 && !state.pendingSortAscending;
-            final isOldest = state.pendingSortColumnIndex == 7 && state.pendingSortAscending;
-
-            return [
-              PopupMenuItem(
-                value: false, // Newest
-                height: 40,
-                child: Row(
-                  children: [
-                    Icon(
-                      isNewest
-                          ? Icons.radio_button_checked
-                          : Icons.radio_button_unchecked,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Updated (Newest)',
-                      style: GoogleFonts.inter(fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: true, // Oldest
-                height: 40,
-                child: Row(
-                  children: [
-                    Icon(
-                      isOldest
-                          ? Icons.radio_button_checked
-                          : Icons.radio_button_unchecked,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Updated (Oldest)',
-                      style: GoogleFonts.inter(fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-            ];
-          },
-          onSelected: (ascending) {
-            context.read<OnboardingQueueBloc>().add(
-              SortApplicantsEvent(ascending, 7),
-            );
-          },
         ),
       ],
     );
@@ -266,7 +337,35 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
         }
 
         if (state.errorMessage != null) {
-          return Center(child: Text('Error: ${state.errorMessage}'));
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Colors.red[400]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Unable to load applications',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    state.errorMessage!,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
         return Container(
@@ -393,7 +492,7 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(
-                              Symbols.exit_to_app,
+                              Symbols.tab_move,
                               size: 16,
                               color: Colors.black,
                             ),

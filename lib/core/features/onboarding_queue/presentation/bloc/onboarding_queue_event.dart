@@ -67,3 +67,5 @@ class SelectApplicantForReviewEvent extends OnboardingQueueEvent {
 }
 
 class ClearSelectedApplicantEvent extends OnboardingQueueEvent {}
+
+class GetProfessionalTagsEvent extends OnboardingQueueEvent {}

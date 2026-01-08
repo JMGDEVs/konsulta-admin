@@ -5,6 +5,7 @@ import 'package:konsulta_admin/core/features/onboarding_queue/data/models/mock_a
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_pending_applicants_usecase.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_under_review_applicants_usecase.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/start_review_usecase.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_professional_tags_usecase.dart';
 
 part 'onboarding_queue_event.dart';
 part 'onboarding_queue_state.dart';
@@ -15,11 +16,13 @@ class OnboardingQueueBloc
   final GetPendingApplicantsUseCase getPendingApplicantsUseCase;
   final GetUnderReviewApplicantsUseCase getUnderReviewApplicantsUseCase;
   final StartReviewUseCase startReviewUseCase;
+  final GetProfessionalTagsUseCase getProfessionalTagsUseCase;
 
   OnboardingQueueBloc(
     this.getPendingApplicantsUseCase,
     this.getUnderReviewApplicantsUseCase,
     this.startReviewUseCase,
+    this.getProfessionalTagsUseCase,
   ) : super(OnboardingQueueState()) {
     on<SetActiveScreenEvent>(_onSetActiveScreen);
     on<GetPendingApplicantsEvent>(_onGetPendingApplicants);
@@ -30,6 +33,7 @@ class OnboardingQueueBloc
     on<SortApplicantsEvent>(_onSortApplicants);
     on<SelectApplicantForReviewEvent>(_onSelectApplicantForReview);
     on<ClearSelectedApplicantEvent>(_onClearSelectedApplicant);
+    on<GetProfessionalTagsEvent>(_onGetProfessionalTags);
   }
 
   void _onSetActiveScreen(
@@ -50,8 +54,8 @@ class OnboardingQueueBloc
       final professionId = event.professionId ?? state.pendingProfessionId;
 
       final applicants = await getPendingApplicantsUseCase(
-        search: searchQuery,
-        professionalTag: professionId,
+        searchQuery: searchQuery,
+        professionId: professionId,
       );
 
       // Default sort: Newest first (descending by created_at)
@@ -61,12 +65,14 @@ class OnboardingQueueBloc
         return dateB.compareTo(dateA);
       });
 
-      emit(state.copyWith(
-        isLoading: false,
-        applicants: applicants,
-        pendingSearchQuery: searchQuery,
-        pendingProfessionId: professionId,
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          applicants: applicants,
+          pendingSearchQuery: searchQuery,
+          pendingProfessionId: professionId,
+        ),
+      );
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
@@ -95,8 +101,8 @@ class OnboardingQueueBloc
           final lowerQuery = searchQuery.toLowerCase();
           applicants = applicants.where((applicant) {
             return applicant.fullName.toLowerCase().contains(lowerQuery) ||
-                   (applicant.phone ?? '').contains(lowerQuery) ||
-                   (applicant.email ?? '').toLowerCase().contains(lowerQuery);
+                (applicant.phone ?? '').contains(lowerQuery) ||
+                (applicant.email ?? '').toLowerCase().contains(lowerQuery);
           }).toList();
         }
 
@@ -109,8 +115,8 @@ class OnboardingQueueBloc
       } else {
         // Original API call (keep this intact)
         applicants = await getUnderReviewApplicantsUseCase(
-          search: searchQuery,
-          professionalTag: professionId,
+          searchQuery: searchQuery,
+          professionId: professionId,
         );
       }
 
@@ -121,17 +127,18 @@ class OnboardingQueueBloc
         return dateB.compareTo(dateA);
       });
 
-      emit(state.copyWith(
-        isUnderReviewLoading: false,
-        underReviewApplicants: applicants,
-        underReviewSearchQuery: searchQuery,
-        underReviewProfessionId: professionId,
-      ));
+      emit(
+        state.copyWith(
+          isUnderReviewLoading: false,
+          underReviewApplicants: applicants,
+          underReviewSearchQuery: searchQuery,
+          underReviewProfessionId: professionId,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isUnderReviewLoading: false,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(isUnderReviewLoading: false, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -190,7 +197,9 @@ class OnboardingQueueBloc
 
     // Determine which list to sort based on active screen
     final isUnderReview = state.activeScreen == ActiveScreen.underReview;
-    final sourceList = isUnderReview ? state.underReviewApplicants : state.applicants;
+    final sourceList = isUnderReview
+        ? state.underReviewApplicants
+        : state.applicants;
     final sortedApplicants = List<ApplicantModel>.from(sourceList);
 
     sortedApplicants.sort((a, b) {
@@ -268,23 +277,50 @@ class OnboardingQueueBloc
     Emitter<OnboardingQueueState> emit,
   ) {
     // To clear nullable field, create new state with null explicitly
-    emit(OnboardingQueueState(
-      isLoading: state.isLoading,
-      applicants: state.applicants,
-      isUnderReviewLoading: state.isUnderReviewLoading,
-      underReviewApplicants: state.underReviewApplicants,
-      errorMessage: state.errorMessage,
-      activeScreen: state.activeScreen,
-      pendingSearchQuery: state.pendingSearchQuery,
-      pendingProfessionId: state.pendingProfessionId,
-      pendingSortAscending: state.pendingSortAscending,
-      pendingSortColumnIndex: state.pendingSortColumnIndex,
-      underReviewSearchQuery: state.underReviewSearchQuery,
-      underReviewProfessionId: state.underReviewProfessionId,
-      underReviewSortAscending: state.underReviewSortAscending,
-      underReviewSortColumnIndex: state.underReviewSortColumnIndex,
-      isReviewLoading: state.isReviewLoading,
-      selectedApplicantForReview: null, // Explicitly set to null
-    ));
+    emit(
+      OnboardingQueueState(
+        isLoading: state.isLoading,
+        applicants: state.applicants,
+        isUnderReviewLoading: state.isUnderReviewLoading,
+        underReviewApplicants: state.underReviewApplicants,
+        errorMessage: state.errorMessage,
+        activeScreen: state.activeScreen,
+        pendingSearchQuery: state.pendingSearchQuery,
+        pendingProfessionId: state.pendingProfessionId,
+        pendingSortAscending: state.pendingSortAscending,
+        pendingSortColumnIndex: state.pendingSortColumnIndex,
+        underReviewSearchQuery: state.underReviewSearchQuery,
+        underReviewProfessionId: state.underReviewProfessionId,
+        underReviewSortAscending: state.underReviewSortAscending,
+        underReviewSortColumnIndex: state.underReviewSortColumnIndex,
+        isReviewLoading: state.isReviewLoading,
+        selectedApplicantForReview: null, // Explicitly set to null
+        professionalTags: state.professionalTags,
+        isLoadingProfessionalTags: state.isLoadingProfessionalTags,
+      ),
+    );
+  }
+
+  Future<void> _onGetProfessionalTags(
+    GetProfessionalTagsEvent event,
+    Emitter<OnboardingQueueState> emit,
+  ) async {
+    emit(state.copyWith(isLoadingProfessionalTags: true));
+    try {
+      final tags = await getProfessionalTagsUseCase();
+      emit(
+        state.copyWith(
+          isLoadingProfessionalTags: false,
+          professionalTags: tags,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isLoadingProfessionalTags: false,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
   }
 }

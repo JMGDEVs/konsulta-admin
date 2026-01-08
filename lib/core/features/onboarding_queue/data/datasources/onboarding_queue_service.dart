@@ -1,172 +1,181 @@
-import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:http/http.dart' as http;
 import 'package:konsulta_admin/core/service/api_service/api_paths.dart';
-import 'package:konsulta_admin/core/service/config/config_model.dart';
+import 'package:konsulta_admin/core/service/api_service/konsulta_admin_api.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applicant_model.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 @lazySingleton
 class OnboardingQueueService {
-  final Config config;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final KonsultaProApi api;
 
-  OnboardingQueueService(@Named('devConfig') this.config);
+  OnboardingQueueService(this.api);
 
   Future<List<ApplicantModel>> getPendingApplicants({
-    String? search,
-    String? professionalTag,
+    String? searchQuery,
+    String? professionId,
+    int? pageNumber,
+    int? pageSize,
   }) async {
-    final token = await _secureStorage.read(key: 'token');
-
-    final queryParameters = {
-      if (search != null && search.isNotEmpty) 'search': search,
-      if (professionalTag != null && professionalTag.isNotEmpty)
-        'professionalTag': professionalTag,
+    final queryParams = {
+      if (searchQuery != null && searchQuery.isNotEmpty)
+        'searchQuery': searchQuery,
+      if (professionId != null && professionId.isNotEmpty)
+        'professionId': professionId,
+      if (pageNumber != null) 'pageNumber': pageNumber,
+      if (pageSize != null) 'pageSize': pageSize,
     };
 
-    final uri = Uri.https(
-      config.apiDomain,
-      '${config.apiBasePath}${ApiPath.getPendingApplicants}',
-      queryParameters,
+    final result = await api.get(
+      ApiPath.getPendingApplicants,
+      queryParams: queryParams,
     );
 
-    // Debug logging
-    print('🔹 [GET Pending] $uri');
-    print('🔸 Query Parameters: $queryParameters');
+    // Debug: Print API response and status code
+    debugPrint('=== Get Pending Applicants API ===');
+    debugPrint('Status Code: ${result.statusCode}');
+    debugPrint('Response Body: ${result.body}');
+    debugPrint('Is Success: ${result.isSuccess}');
 
-    final response = await http.get(
-      uri,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    debugPrint('=====================================');
 
-    // Debug logging
-    print('🔹 [HTTP ${response.statusCode}] Pending Response');
-    final responsePreview = response.body.length > 200
-        ? '${response.body.substring(0, 200)}...'
-        : response.body;
-    print('🔸 Response Body: $responsePreview');
-
-    if (response.statusCode == 200) {
-      final dynamic decoded = json.decode(response.body);
-      List<dynamic> data;
-
-      if (decoded is Map && decoded.containsKey('data')) {
-        final dataObj = decoded['data'];
-        if (dataObj is Map && dataObj.containsKey('applicants')) {
-          // Swagger API returns: { success, message, data: { applicants: [...] } }
-          data = dataObj['applicants'] as List<dynamic>;
-        } else if (dataObj is List) {
-          // Fallback: data is directly a list
-          data = dataObj;
-        } else {
-          data = [];
-        }
-      } else if (decoded is List) {
-        // Fallback: response is directly a list
-        data = decoded;
-      } else {
-        data = [];
-      }
-
-      return data.map((json) => ApplicantModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load pending applicants');
+    if (!result.isSuccess) {
+      throw Exception(result.errorMessage);
     }
+
+    final data = result.data;
+    List<dynamic> applicants;
+
+    if (data is Map && data.containsKey('data')) {
+      final dataObj = data['data'];
+      if (dataObj is Map && dataObj.containsKey('applicants')) {
+        // Swagger API returns: { success, message, data: { applicants: [...] } }
+        applicants = dataObj['applicants'] as List<dynamic>;
+      } else if (dataObj is List) {
+        // Fallback: data is directly a list
+        applicants = dataObj as List<dynamic>;
+      } else {
+        applicants = [];
+      }
+    } else if (data is List) {
+      // Fallback: response is directly a list
+      applicants = data as List<dynamic>;
+    } else {
+      applicants = [];
+    }
+
+    return applicants.map((json) => ApplicantModel.fromJson(json)).toList();
   }
 
   Future<List<ApplicantModel>> getUnderReviewApplicants({
-    String? search,
-    String? professionalTag,
+    String? searchQuery,
+    String? professionId,
     int? adminUserId,
   }) async {
-    final token = await _secureStorage.read(key: 'token');
-
-    final queryParameters = {
-      if (search != null && search.isNotEmpty) 'search': search,
-      if (professionalTag != null && professionalTag.isNotEmpty)
-        'professionalTag': professionalTag,
-      if (adminUserId != null) 'admin_user_id': adminUserId.toString(),
+    final queryParams = {
+      if (searchQuery != null && searchQuery.isNotEmpty)
+        'searchQuery': searchQuery,
+      if (professionId != null && professionId.isNotEmpty)
+        'professionId': professionId,
+      if (adminUserId != null) 'adminUserId': adminUserId,
     };
 
-    final uri = Uri.https(
-      config.apiDomain,
-      '${config.apiBasePath}${ApiPath.getUnderReviewApplicants}',
-      queryParameters,
+    final result = await api.get(
+      ApiPath.getUnderReviewApplicants,
+      queryParams: queryParams,
     );
 
-    // Debug logging
-    print('🔹 [GET Under Review] $uri');
-    print('🔸 Query Parameters: $queryParameters');
+    // Debug: Print API response and status code
+    debugPrint('=== Get Under Review Applicants API ===');
+    debugPrint('Status Code: ${result.statusCode}');
+    debugPrint('Response Body: ${result.body}');
+    debugPrint('Is Success: ${result.isSuccess}');
+    debugPrint('Error Message: ${result.errorMessage}');
+    debugPrint('========================================');
 
-    final response = await http.get(
-      uri,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    // Debug logging
-    print('🔹 [HTTP ${response.statusCode}] Under Review Response');
-    final responsePreview = response.body.length > 200
-        ? '${response.body.substring(0, 200)}...'
-        : response.body;
-    print('🔸 Response Body: $responsePreview');
-
-    if (response.statusCode == 200) {
-      final dynamic decoded = json.decode(response.body);
-      List<dynamic> data;
-
-      if (decoded is Map && decoded.containsKey('data')) {
-        final dataObj = decoded['data'];
-        if (dataObj is Map && dataObj.containsKey('applicants')) {
-          // Swagger API returns: { success, message, data: { applicants: [...] } }
-          data = dataObj['applicants'] as List<dynamic>;
-        } else if (dataObj is List) {
-          // Fallback: data is directly a list
-          data = dataObj;
-        } else {
-          data = [];
-        }
-      } else if (decoded is List) {
-        // Fallback: response is directly a list
-        data = decoded;
-      } else {
-        data = [];
-      }
-
-      return data.map((json) => ApplicantModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load under review applicants');
+    if (!result.isSuccess) {
+      throw Exception(result.errorMessage);
     }
+
+    final data = result.data;
+    List<dynamic> applicants;
+
+    if (data is Map && data.containsKey('data')) {
+      final dataObj = data['data'];
+      if (dataObj is Map && dataObj.containsKey('applicants')) {
+        applicants = dataObj['applicants'] as List<dynamic>;
+      } else if (dataObj is List) {
+        applicants = dataObj as List<dynamic>;
+      } else {
+        applicants = [];
+      }
+    } else if (data is List) {
+      applicants = data as List<dynamic>;
+    } else {
+      applicants = [];
+    }
+
+    return applicants.map((json) => ApplicantModel.fromJson(json)).toList();
   }
 
   Future<bool> startReview(String applicantId) async {
-    final token = await _secureStorage.read(key: 'token');
-
-    final uri = Uri.https(
-      config.apiDomain,
-      '${config.apiBasePath}${ApiPath.startReview}',
+    final result = await api.post(
+      ApiPath.startReview,
+      body: {'applicantId': applicantId},
     );
 
-    // Swagger API expects POST request body with applicantId
-    final response = await http.post(
-      uri,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({'applicantId': applicantId}),
-    );
+    // Debug: Print API response and status code
+    debugPrint('=== Start Review API ===');
+    debugPrint('Applicant ID: $applicantId');
+    debugPrint('Status Code: ${result.statusCode}');
+    debugPrint('Response Body: ${result.body}');
+    debugPrint('Is Success: ${result.isSuccess}');
+    debugPrint('Error Message: ${result.errorMessage}');
+    debugPrint('==========================');
 
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      throw Exception('Failed to start review');
+    if (!result.isSuccess) {
+      throw Exception(result.errorMessage);
     }
+
+    return true;
+  }
+
+  Future<List<String>> getProfessionalTags() async {
+    final result = await api.get(ApiPath.getProfessionalTags);
+
+    // Debug: Print API response and status code
+    debugPrint('=== Get Professional Tags API ===');
+    debugPrint('Status Code: ${result.statusCode}');
+    debugPrint('Response Body: ${result.body}');
+    debugPrint('Is Success: ${result.isSuccess}');
+    debugPrint('Error Message: ${result.errorMessage}');
+    debugPrint('==================================');
+
+    if (!result.isSuccess) {
+      throw Exception(result.errorMessage);
+    }
+
+    final data = result.data;
+    List<dynamic> tags;
+
+    if (data is Map && data.containsKey('data')) {
+      final dataObj = data['data'];
+      if (dataObj is List) {
+        tags = dataObj as List<dynamic>;
+      } else {
+        tags = [];
+      }
+    } else if (data is List) {
+      tags = data as List<dynamic>;
+    } else {
+      tags = [];
+    }
+
+    // Extract tag_name from each tag object
+    return tags.map((tag) {
+      if (tag is Map<String, dynamic>) {
+        return tag['tag_name']?.toString() ?? tag.toString();
+      }
+      return tag.toString();
+    }).toList();
   }
 }

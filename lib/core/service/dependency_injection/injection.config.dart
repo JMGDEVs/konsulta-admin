@@ -31,6 +31,8 @@ import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/ge
     as _i361;
 import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/start_review_usecase.dart'
     as _i556;
+import 'package:konsulta_admin/core/features/onboarding_queue/domain/usecases/get_professional_tags_usecase.dart'
+    as _i1001;
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart'
     as _i908;
 import 'package:konsulta_admin/core/service/api_service/konsulta_admin_api.dart'
@@ -51,9 +53,7 @@ extension GetItInjectableX on _i174.GetIt {
       instanceName: 'devConfig',
     );
     gh.lazySingleton<_i350.OnboardingQueueService>(
-      () => _i350.OnboardingQueueService(
-        gh<_i950.Config>(instanceName: 'devConfig'),
-      ),
+      () => _i350.OnboardingQueueService(gh<_i999.KonsultaProApi>()),
     );
     gh.lazySingleton<_i999.KonsultaProApi>(
       () => _i999.KonsultaProApi(gh<_i950.Config>(instanceName: 'devConfig')),
@@ -82,6 +82,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i556.StartReviewUseCase>(
       () => _i556.StartReviewUseCase(gh<_i209.OnboardingQueueRepository>()),
     );
+    gh.lazySingleton<_i1001.GetProfessionalTagsUseCase>(
+      () => _i1001.GetProfessionalTagsUseCase(
+        gh<_i209.OnboardingQueueRepository>(),
+      ),
+    );
     gh.lazySingleton<_i988.AuthBloc>(
       () => _i988.AuthBloc(gh<_i218.AuthUseCase>()),
     );
@@ -90,6 +95,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i844.GetPendingApplicantsUseCase>(),
         gh<_i361.GetUnderReviewApplicantsUseCase>(),
         gh<_i556.StartReviewUseCase>(),
+        gh<_i1001.GetProfessionalTagsUseCase>(),
       ),
     );
     return this;

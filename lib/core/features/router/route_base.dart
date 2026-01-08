@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:konsulta_admin/core/features/authentication/presentation/pages/login_layout.dart';
 import 'package:konsulta_admin/core/features/home_controller/home_state_controller.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/application_review_screen.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/pending_applications_screen.dart';
 import 'package:konsulta_admin/core/features/router/route_paths.dart';
 
 class RoutePages {
@@ -35,6 +36,17 @@ class RoutePages {
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const ApplicationReviewScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    ),
+    GoRoute(
+      name: '/application-pending',
+      path: RoutePaths.applicationReview,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const PendingApplicationsScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },

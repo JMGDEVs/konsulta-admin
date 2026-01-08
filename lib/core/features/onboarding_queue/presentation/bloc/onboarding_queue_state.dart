@@ -27,6 +27,10 @@ class OnboardingQueueState {
   // Selected applicant for detail view
   final ApplicantModel? selectedApplicantForReview;
 
+  // Professional tags from API
+  final List<String> professionalTags;
+  final bool isLoadingProfessionalTags;
+
   OnboardingQueueState({
     this.isLoading = false,
     this.applicants = const [],
@@ -44,6 +48,8 @@ class OnboardingQueueState {
     this.underReviewSortColumnIndex = 7,
     this.isReviewLoading = false,
     this.selectedApplicantForReview,
+    this.professionalTags = const [],
+    this.isLoadingProfessionalTags = false,
   });
 
   OnboardingQueueState copyWith({
@@ -63,24 +69,36 @@ class OnboardingQueueState {
     int? underReviewSortColumnIndex,
     bool? isReviewLoading,
     ApplicantModel? selectedApplicantForReview,
+    List<String>? professionalTags,
+    bool? isLoadingProfessionalTags,
   }) {
     return OnboardingQueueState(
       isLoading: isLoading ?? this.isLoading,
       applicants: applicants ?? this.applicants,
       isUnderReviewLoading: isUnderReviewLoading ?? this.isUnderReviewLoading,
-      underReviewApplicants: underReviewApplicants ?? this.underReviewApplicants,
+      underReviewApplicants:
+          underReviewApplicants ?? this.underReviewApplicants,
       errorMessage: errorMessage ?? this.errorMessage,
       activeScreen: activeScreen ?? this.activeScreen,
       pendingSearchQuery: pendingSearchQuery ?? this.pendingSearchQuery,
       pendingProfessionId: pendingProfessionId ?? this.pendingProfessionId,
       pendingSortAscending: pendingSortAscending ?? this.pendingSortAscending,
-      pendingSortColumnIndex: pendingSortColumnIndex ?? this.pendingSortColumnIndex,
-      underReviewSearchQuery: underReviewSearchQuery ?? this.underReviewSearchQuery,
-      underReviewProfessionId: underReviewProfessionId ?? this.underReviewProfessionId,
-      underReviewSortAscending: underReviewSortAscending ?? this.underReviewSortAscending,
-      underReviewSortColumnIndex: underReviewSortColumnIndex ?? this.underReviewSortColumnIndex,
+      pendingSortColumnIndex:
+          pendingSortColumnIndex ?? this.pendingSortColumnIndex,
+      underReviewSearchQuery:
+          underReviewSearchQuery ?? this.underReviewSearchQuery,
+      underReviewProfessionId:
+          underReviewProfessionId ?? this.underReviewProfessionId,
+      underReviewSortAscending:
+          underReviewSortAscending ?? this.underReviewSortAscending,
+      underReviewSortColumnIndex:
+          underReviewSortColumnIndex ?? this.underReviewSortColumnIndex,
       isReviewLoading: isReviewLoading ?? this.isReviewLoading,
-      selectedApplicantForReview: selectedApplicantForReview ?? this.selectedApplicantForReview,
+      selectedApplicantForReview:
+          selectedApplicantForReview ?? this.selectedApplicantForReview,
+      professionalTags: professionalTags ?? this.professionalTags,
+      isLoadingProfessionalTags:
+          isLoadingProfessionalTags ?? this.isLoadingProfessionalTags,
     );
   }
 }
