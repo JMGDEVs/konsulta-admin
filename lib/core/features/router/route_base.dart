@@ -4,6 +4,7 @@ import 'package:konsulta_admin/core/features/authentication/presentation/pages/l
 import 'package:konsulta_admin/core/features/home_controller/home_state_controller.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/application_review_screen.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/pending_applications_screen.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/under_review_screen.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/verified_applications_screen.dart';
 import 'package:konsulta_admin/core/features/router/route_paths.dart';
 
@@ -44,10 +45,21 @@ class RoutePages {
     ),
     GoRoute(
       name: '/application-pending',
-      path: RoutePaths.applicationReview,
+      path: RoutePaths.pendingApplications,
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const PendingApplicationsScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    ),
+    GoRoute(
+      name: '/under-review',
+      path: RoutePaths.underReview,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const UnderReviewScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
