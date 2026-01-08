@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applicant_model.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart';
-import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/under_review/utils/date_formatters.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/utils/date_formatters.dart';
 
 /// Table widget for displaying Under Review applicants
 ///

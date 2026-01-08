@@ -11,6 +11,17 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
 
   OnboardingQueueRepositoryImpl(this._api);
 
+  // Logs API call details for debugging
+  void _logApiCall(String endpoint, APIResult result, {Map<String, dynamic>? queryParams}) {
+    debugPrint('=== $endpoint ===');
+    if (queryParams != null) debugPrint('Query Params: $queryParams');
+    debugPrint('Status Code: ${result.statusCode}');
+    debugPrint('Response Body: ${result.body}');
+    debugPrint('Is Success: ${result.isSuccess}');
+    if (!result.isSuccess) debugPrint('Error Message: ${result.errorMessage}');
+    debugPrint('${'=' * (endpoint.length + 8)}');
+  }
+
   @override
   Future<List<ApplicantModel>> getPendingApplicants({
     String? searchQuery,
@@ -28,11 +39,7 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
       queryParams: queryParams,
     );
 
-    debugPrint('=== Get Pending Applicants API ===');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    debugPrint('=====================================');
+    _logApiCall('Get Pending Applicants API', result);
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
@@ -67,27 +74,18 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
   }) async {
     final queryParams = {
       if (searchQuery != null && searchQuery.isNotEmpty)
-        'searchQuery': searchQuery,
+        'search': searchQuery,
       if (professionId != null && professionId.isNotEmpty)
         'professionalTag': professionId,
-      if (adminUserId != null) 'adminUserId': adminUserId,
+      if (adminUserId != null) 'admin_user_id': adminUserId,
     };
-
-    debugPrint('=== Get Under Review Applicants API ===');
-    debugPrint('Query Params: searchQuery=$searchQuery, professionalTag=$professionId');
 
     final result = await _api.get(
       ApiPath.getUnderReviewApplicants,
       queryParams: queryParams,
     );
 
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    if (!result.isSuccess) {
-      debugPrint('Error Message: ${result.errorMessage}');
-    }
-    debugPrint('========================================');
+    _logApiCall('Get Under Review Applicants API', result, queryParams: queryParams);
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
@@ -132,14 +130,7 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
       queryParams: queryParams,
     );
 
-    debugPrint('=== Get Verified Applicants API ===');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    if (!result.isSuccess) {
-      debugPrint('Error Message: ${result.errorMessage}');
-    }
-    debugPrint('====================================');
+    _logApiCall('Get Verified Applicants API', result);
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
@@ -174,27 +165,18 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
   }) async {
     final queryParams = {
       if (searchQuery != null && searchQuery.isNotEmpty)
-        'searchQuery': searchQuery,
+        'search': searchQuery,
       if (professionId != null && professionId.isNotEmpty)
         'professionalTag': professionId,
-      if (adminUserId != null) 'adminUserId': adminUserId,
+      if (adminUserId != null) 'admin_user_id': adminUserId,
     };
-
-    debugPrint('=== Get Rejected Applicants API ===');
-    debugPrint('Query Params: searchQuery=$searchQuery, professionalTag=$professionId');
 
     final result = await _api.get(
       ApiPath.getRejectedApplicants,
       queryParams: queryParams,
     );
 
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    if (!result.isSuccess) {
-      debugPrint('Error Message: ${result.errorMessage}');
-    }
-    debugPrint('========================================');
+    _logApiCall('Get Rejected Applicants API', result, queryParams: queryParams);
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
@@ -229,15 +211,7 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
       body: {'applicantId': applicantId},
     );
 
-    debugPrint('=== Start Review API ===');
-    debugPrint('Applicant ID: $applicantId');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    if (!result.isSuccess) {
-      debugPrint('Error Message: ${result.errorMessage}');
-    }
-    debugPrint('==========================');
+    _logApiCall('Start Review API', result);
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
@@ -250,14 +224,7 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
   Future<List<String>> getProfessionalTags() async {
     final result = await _api.get(ApiPath.getProfessionalTags);
 
-    debugPrint('=== Get Professional Tags API ===');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    if (!result.isSuccess) {
-      debugPrint('Error Message: ${result.errorMessage}');
-    }
-    debugPrint('==================================');
+    _logApiCall('Get Professional Tags API', result);
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
