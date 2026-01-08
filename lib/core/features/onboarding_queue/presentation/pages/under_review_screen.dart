@@ -581,7 +581,7 @@ class _UnderReviewViewState extends State<UnderReviewView> {
   }
 }
 
-// Applicant Details View Widget (Placeholder)
+// Applicant Details View Widget (Minimal Placeholder)
 class _ApplicantDetailsView extends StatelessWidget {
   final ApplicantModel applicant;
 
@@ -589,150 +589,309 @@ class _ApplicantDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return Container(
+      color: const Color(0xFFF5F5F5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
         // Top bar with back button and reject button
         Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                context.read<OnboardingQueueBloc>().add(
-                  ClearSelectedApplicantEvent(),
-                );
-              },
-              tooltip: 'Back to list',
+            Container(
+              margin: const EdgeInsets.only(left: 176.0, top: 16.0),
+              child: SizedBox(
+                width: 32,
+                height: 32,
+                child: IconButton(
+                  icon: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: Image.asset('assets/icons/lets-icons_back.png'),
+                  ),
+                  onPressed: () {
+                    context.read<OnboardingQueueBloc>().add(
+                      ClearSelectedApplicantEvent(),
+                    );
+                  },
+                  tooltip: 'Back to list',
+                  padding: EdgeInsets.zero,
+                ),
+              ),
             ),
             const Spacer(),
-            ElevatedButton.icon(
-              onPressed: () => _handleReject(context),
-              icon: const Icon(Icons.close, size: 18),
-              label: const Text('Reject Applicant'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            Container(
+              margin: const EdgeInsets.only(right: 176.0, top: 16.0),
+              child: SizedBox(
+                width: 170,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () => _handleReject(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFEA4335),
+                    foregroundColor: const Color(0xFFFFFFFF),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 0,
+                    minimumSize: const Size(170, 50),
+                  ),
+                  child: Text(
+                    'Reject Applicant',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      height: 1.25, // 125% line height
+                      letterSpacing: -0.32, // -2% of 16px
+                      color: const Color(0xFFFFFFFF),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
         ),
+
         const SizedBox(height: 24),
 
-        // Applicant Details Title
-        Text(
-          'Applicant Details',
-          style: GoogleFonts.inter(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'December 4, 2025 at 7:49 am',
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
-        const SizedBox(height: 32),
-
-        // Applicant Information (Placeholder)
+        // Split Column Layout
         Expanded(
-          child: SingleChildScrollView(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Left column - Personal Information
-                Expanded(
-                  flex: 1,
-                  child: Card(
-                    elevation: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildInfoRow('Name', applicant.fullName),
-                          const SizedBox(height: 16),
-                          _buildInfoRow('Profession', applicant.professionalTag ?? '---'),
-                          const SizedBox(height: 16),
-                          _buildInfoRow('Phone number', applicant.phone ?? '---'),
-                          const SizedBox(height: 16),
-                          _buildInfoRow('Email address', applicant.email ?? '---'),
-                          const SizedBox(height: 16),
-                          _buildInfoRow('Gender', applicant.gender ?? '---'),
-                          const SizedBox(height: 16),
-                          _buildInfoRow('Birthdate', applicant.birthDate ?? 'MM/DD/YYYY'),
-                          const SizedBox(height: 16),
-                          _buildInfoRow('Status', applicant.verificationStatus ?? 'Pending'),
-                          const SizedBox(height: 16),
-                          _buildInfoRow('Registered date', applicant.createdAt ?? 'MM/DD/YYYY'),
-                        ],
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Left Column - Applicant Details
+              Expanded(
+                flex: 1,
+                child: Container(
+                  margin: const EdgeInsets.only(left: 176.0),
+                  height: 526,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0x1A000000), // #0000001A
+                        offset: const Offset(0, 4),
+                        blurRadius: 20,
+                        spreadRadius: 0,
                       ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(40.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title
+                        Text(
+                          'Applicant Details',
+                          style: GoogleFonts.inter(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w600,
+                            height: 1.0,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Timestamp
+                        Text(
+                          _formatDateTime(applicant.createdAt),
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            height: 1.0,
+                            color: const Color(0xFF6F6F6F),
+                          ),
+                        ),
+                        const SizedBox(height: 49),
+
+                        // Name | Profession
+                        _buildFieldRow(
+                          'Name',
+                          applicant.fullName.isNotEmpty ? applicant.fullName : '---',
+                          'Profession',
+                          applicant.professionalTag ?? '---',
+                        ),
+                        const SizedBox(height: 38),
+
+                        // Phone number | Email address
+                        _buildFieldRow(
+                          'Phone number',
+                          applicant.phone ?? '---',
+                          'Email address',
+                          applicant.email ?? '---',
+                        ),
+                        const SizedBox(height: 38),
+
+                        // Gender | Birthdate
+                        _buildFieldRow(
+                          'Gender',
+                          applicant.gender ?? '---',
+                          'Birthdate',
+                          applicant.birthDate != null ? _formatDate(applicant.birthDate) : 'MM/DD/YYYY',
+                        ),
+                        const SizedBox(height: 38),
+
+                        // Status | Registered date
+                        _buildFieldRow(
+                          'Status',
+                          applicant.verificationStatus ?? '---',
+                          'Registered date',
+                          applicant.createdAt != null ? _formatDate(applicant.createdAt) : 'MM/DD/YYYY',
+                          isLeftStatus: true,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 24),
+              ),
+              const SizedBox(width: 23), // Gap between columns
 
-                // Right column - Document Placeholders
-                Expanded(
-                  flex: 1,
+              // Right Column - Document Cards
+              Expanded(
+                flex: 1,
+                child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      // Government ID Section
-                      Card(
-                        elevation: 1,
+                      // Government ID Card
+                      Container(
+                        margin: const EdgeInsets.only(right: 176.0),
+                        height: 420,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0x1A000000), // #0000001A
+                              offset: const Offset(0, 4),
+                              blurRadius: 20,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                        ),
                         child: Padding(
-                          padding: const EdgeInsets.all(24.0),
+                          padding: const EdgeInsets.all(40.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Title
                               Text(
                                 'Government ID',
                                 style: GoogleFonts.inter(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.25, // 125% line height
+                                  letterSpacing: -0.48, // -2% of 24px
+                                  color: Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 10),
+
+                              // Subtitle
                               Text(
                                 'Official Passport Document',
                                 style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.25, // 125% line height
+                                  letterSpacing: 0,
+                                  color: Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 15),
+
+                              // File list items
+                              _buildFileItem('GovernmentIdforkonsultagroup.png', '5.3 mb'),
+                              const SizedBox(height: 10),
+                              _buildFileItem('GovernmentIdforkonsultagroup.png', '5.3 mb'),
+
+                              const SizedBox(height: 25),
+
+                              // Divider line
                               Container(
-                                height: 100,
-                                color: Colors.grey[200],
-                                child: Center(
-                                  child: Text(
-                                    'Document Preview Placeholder',
-                                    style: GoogleFonts.inter(color: Colors.grey[600]),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: OutlinedButton(
-                                      onPressed: () => _handleReturnForRevision(context, 'Government ID'),
-                                      child: const Text('Return for revision'),
+                                height: 2,
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(
+                                      color: Color(0xFFF6F6F6),
+                                      width: 2,
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                ),
+                              ),
+
+                              const SizedBox(height: 15),
+
+                              // Action buttons
+                              Row(
+                                children: [
+                                  // Return for revision button
                                   Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () => _handleApprove(context, 'Government ID'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        foregroundColor: Colors.white,
+                                    child: SizedBox(
+                                      height: 50,
+                                      child: OutlinedButton(
+                                        onPressed: () => _handleReturnForRevision(context),
+                                        style: OutlinedButton.styleFrom(
+                                          backgroundColor: Colors.white,
+                                          side: const BorderSide(
+                                            color: Color(0xFFE9E9E9),
+                                            width: 1.5,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 18,
+                                          ),
+                                          minimumSize: const Size(261, 50),
+                                        ),
+                                        child: Text(
+                                          'Return for revision',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.0,
+                                            letterSpacing: -0.32, // -2% of 16px
+                                            color: Colors.black,
+                                          ),
+                                        ),
                                       ),
-                                      child: const Text('Approve'),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 20),
+
+                                  // Approve button
+                                  Expanded(
+                                    child: SizedBox(
+                                      height: 50,
+                                      child: ElevatedButton(
+                                        onPressed: () => _handleApproveGovernmentId(context),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(0xFF0BC43C),
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 18,
+                                          ),
+                                          minimumSize: const Size(261, 50),
+                                          elevation: 0,
+                                        ),
+                                        child: Text(
+                                          'Approve',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.0,
+                                            letterSpacing: -0.32, // -2% of 16px
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -741,60 +900,146 @@ class _ApplicantDetailsView extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20), // Gap between cards
 
-                      // Professional ID Section
-                      Card(
-                        elevation: 1,
+                      // Professional ID Card
+                      Container(
+                        margin: const EdgeInsets.only(right: 176.0),
+                        height: 420,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0x1A000000), // #0000001A
+                              offset: const Offset(0, 4),
+                              blurRadius: 20,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                        ),
                         child: Padding(
-                          padding: const EdgeInsets.all(24.0),
+                          padding: const EdgeInsets.all(40.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Title
                               Text(
                                 'Professional ID',
                                 style: GoogleFonts.inter(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.25, // 125% line height
+                                  letterSpacing: -0.48, // -2% of 24px
+                                  color: Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 10),
+
+                              // Subtitle
                               Text(
                                 'Lawyer License',
                                 style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.25, // 125% line height
+                                  letterSpacing: 0,
+                                  color: Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 15),
+
+                              // File list items
+                              _buildFileItem('ProfessionalIDforkonsultagroup.png', '5.3 mb'),
+                              const SizedBox(height: 10),
+                              _buildFileItem('ProfessionalIDforkonsultagroup.png', '5.3 mb'),
+
+                              const SizedBox(height: 25),
+
+                              // Divider line
                               Container(
-                                height: 100,
-                                color: Colors.grey[200],
-                                child: Center(
-                                  child: Text(
-                                    'Document Preview Placeholder',
-                                    style: GoogleFonts.inter(color: Colors.grey[600]),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: OutlinedButton(
-                                      onPressed: () => _handleReturnForRevision(context, 'Professional ID'),
-                                      child: const Text('Return for revision'),
+                                height: 2,
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(
+                                      color: Color(0xFFF6F6F6),
+                                      width: 2,
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                ),
+                              ),
+
+                              const SizedBox(height: 15),
+
+                              // Action buttons
+                              Row(
+                                children: [
+                                  // Return for revision button
                                   Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () => _handleApprove(context, 'Professional ID'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        foregroundColor: Colors.white,
+                                    child: SizedBox(
+                                      height: 50,
+                                      child: OutlinedButton(
+                                        onPressed: () => _handleReturnForRevision(context),
+                                        style: OutlinedButton.styleFrom(
+                                          backgroundColor: Colors.white,
+                                          side: const BorderSide(
+                                            color: Color(0xFFE9E9E9),
+                                            width: 1.5,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 18,
+                                          ),
+                                          minimumSize: const Size(261, 50),
+                                        ),
+                                        child: Text(
+                                          'Return for revision',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.0,
+                                            letterSpacing: -0.32, // -2% of 16px
+                                            color: Colors.black,
+                                          ),
+                                        ),
                                       ),
-                                      child: const Text('Approve'),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 20),
+
+                                  // Approve button
+                                  Expanded(
+                                    child: SizedBox(
+                                      height: 50,
+                                      child: ElevatedButton(
+                                        onPressed: () => _handleApproveProfessionalId(context),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(0xFF0BC43C),
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 18,
+                                          ),
+                                          minimumSize: const Size(261, 50),
+                                          elevation: 0,
+                                        ),
+                                        child: Text(
+                                          'Approve',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.0,
+                                            letterSpacing: -0.32, // -2% of 16px
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -806,111 +1051,75 @@ class _ApplicantDetailsView extends StatelessWidget {
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  String _formatDateTime(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return 'N/A';
+    try {
+      final date = DateTime.parse(dateStr);
+      return DateFormat('MMMM d, yyyy \'at\' h:mm a').format(date);
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return 'MM/DD/YYYY';
+    try {
+      final date = DateTime.parse(dateStr);
+      return DateFormat('MM/dd/yyyy').format(date);
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  Widget _buildField(String label, String value, {bool isStatus = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: GoogleFonts.inter(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[700],
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            height: 1.3,
+            color: Colors.black,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         Text(
           value,
           style: GoogleFonts.inter(
-            fontSize: 14,
-            color: Colors.black87,
+            fontSize: 16,
+            fontWeight: isStatus ? FontWeight.w600 : FontWeight.w500,
+            height: 1.3,
+            letterSpacing: isStatus ? -0.32 : 0, // -2% of 16px for status
+            color: isStatus ? const Color(0xFFFFC107) : Colors.black,
           ),
         ),
       ],
     );
   }
 
-  void _handleApprove(BuildContext context, String documentType) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(
-            'Approve $documentType',
-            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            'Are you sure you want to approve this $documentType?',
-            style: GoogleFonts.inter(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('$documentType approved (placeholder action)'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Approve'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _handleReturnForRevision(BuildContext context, String documentType) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(
-            'Return for Revision',
-            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            'Request revision for this $documentType?',
-            style: GoogleFonts.inter(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('$documentType returned for revision (placeholder action)'),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-              },
-              child: const Text('Confirm'),
-            ),
-          ],
-        );
-      },
+  Widget _buildFieldRow(String leftLabel, String leftValue, String rightLabel, String rightValue, {bool isLeftStatus = false}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _buildField(leftLabel, leftValue, isStatus: isLeftStatus),
+        ),
+        const SizedBox(width: 40),
+        Expanded(
+          child: _buildField(rightLabel, rightValue),
+        ),
+      ],
     );
   }
 
@@ -951,6 +1160,222 @@ class _ApplicantDetailsView extends StatelessWidget {
                 foregroundColor: Colors.white,
               ),
               child: const Text('Reject'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildFileItem(String filename, String filesize) {
+    return Container(
+      height: 80,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: const Color(0xFFF5F5F5),
+          width: 2,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0x40000000), // #00000040
+            offset: const Offset(0, 4),
+            blurRadius: 25,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // File icon
+          SizedBox(
+            width: 40,
+            height: 40,
+            child: Image.asset(
+              'assets/icons/material-symbols_file-open-outline-rounded.png',
+              width: 40,
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+          ),
+          const SizedBox(width: 15), // Gap between icon and text
+
+          // Filename and size
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  filename,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    height: 1.25, // 125% line height
+                    letterSpacing: -0.32, // -2% of 16px
+                    color: Colors.black,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  filesize,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    height: 1.25, // 125% line height
+                    letterSpacing: -0.28, // -2% of 14px
+                    color: const Color(0xFF6F6F6F),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // View button
+          Container(
+            width: 57,
+            height: 30,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: const Color(0xFFFFC107),
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                'View',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 1.0,
+                  letterSpacing: -0.28, // -2% of 14px
+                  color: const Color(0xFFFFC107),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleReturnForRevision(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'Return for Revision',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Are you sure you want to return this document for revision?',
+            style: GoogleFonts.inter(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Government ID returned for revision (placeholder action)'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Return'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleApproveGovernmentId(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'Approve Government ID',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Are you sure you want to approve this Government ID document?',
+            style: GoogleFonts.inter(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Government ID approved (placeholder action)'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0BC43C),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Approve'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleApproveProfessionalId(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'Approve Professional ID',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Are you sure you want to approve this Professional ID document?',
+            style: GoogleFonts.inter(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Professional ID approved (placeholder action)'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0BC43C),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Approve'),
             ),
           ],
         );
