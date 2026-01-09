@@ -30,14 +30,6 @@ class OnboardingQueueService {
       queryParams: queryParams,
     );
 
-    // Debug: Print API response and status code
-    debugPrint('=== Get Pending Applicants API ===');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-
-    debugPrint('=====================================');
-
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
     }
@@ -84,14 +76,6 @@ class OnboardingQueueService {
       queryParams: queryParams,
     );
 
-    // Debug: Print API response and status code
-    debugPrint('=== Get Under Review Applicants API ===');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    debugPrint('Error Message: ${result.errorMessage}');
-    debugPrint('========================================');
-
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
     }
@@ -123,15 +107,6 @@ class OnboardingQueueService {
       body: {'applicantId': applicantId},
     );
 
-    // Debug: Print API response and status code
-    debugPrint('=== Start Review API ===');
-    debugPrint('Applicant ID: $applicantId');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    debugPrint('Error Message: ${result.errorMessage}');
-    debugPrint('==========================');
-
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
     }
@@ -158,14 +133,6 @@ class OnboardingQueueService {
       ApiPath.getVerifiedApplicants,
       queryParams: queryParams,
     );
-
-    // Debug: Print API response and status code
-    debugPrint('=== Get Verified Applicants API ===');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    debugPrint('Error Message: ${result.errorMessage}');
-    debugPrint('====================================');
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
@@ -197,14 +164,6 @@ class OnboardingQueueService {
 
   Future<List<String>> getProfessionalTags() async {
     final result = await api.get(ApiPath.getProfessionalTags);
-
-    // Debug: Print API response and status code
-    debugPrint('=== Get Professional Tags API ===');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    debugPrint('Error Message: ${result.errorMessage}');
-    debugPrint('==================================');
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);

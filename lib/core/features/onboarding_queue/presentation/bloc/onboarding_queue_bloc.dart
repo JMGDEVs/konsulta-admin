@@ -57,16 +57,70 @@ class OnboardingQueueBloc
       final searchQuery = event.searchQuery ?? state.pendingSearchQuery;
       final professionId = event.professionId ?? state.pendingProfessionId;
 
-      final applicants = await getPendingApplicantsUseCase(
+      // Fetch from API, but still apply filtering locally because the backend
+      // may not support these query params yet.
+      var applicants = await getPendingApplicantsUseCase(
         searchQuery: searchQuery,
         professionId: professionId,
       );
 
-      // Default sort: Newest first (descending by created_at)
+      // Local search filter
+      if (searchQuery.isNotEmpty) {
+        final lowerQuery = searchQuery.toLowerCase();
+        applicants = applicants.where((applicant) {
+          return applicant.fullName.toLowerCase().contains(lowerQuery) ||
+              (applicant.phone ?? '').contains(lowerQuery) ||
+              (applicant.email ?? '').toLowerCase().contains(lowerQuery);
+        }).toList();
+      }
+
+      // Local profession filter
+      if (professionId != null && professionId.isNotEmpty) {
+        applicants = applicants.where((applicant) {
+          return applicant.professionalTag == professionId;
+        }).toList();
+      }
+
+      // Apply current sort settings (default: Registered date, newest first)
+      final sortColumnIndex = state.pendingSortColumnIndex;
+      final sortAscending = state.pendingSortAscending;
       applicants.sort((a, b) {
-        final dateA = DateTime.tryParse(a.createdAt ?? '') ?? DateTime(0);
-        final dateB = DateTime.tryParse(b.createdAt ?? '') ?? DateTime(0);
-        return dateB.compareTo(dateA);
+        int compareResult = 0;
+        switch (sortColumnIndex) {
+          case 0:
+            compareResult = (a.fullName).compareTo(b.fullName);
+            break;
+          case 1:
+            compareResult = (a.professionalTag ?? '').compareTo(
+              b.professionalTag ?? '',
+            );
+            break;
+          case 2:
+            compareResult = (a.phone ?? '').compareTo(b.phone ?? '');
+            break;
+          case 3:
+            compareResult = (a.email ?? '').compareTo(b.email ?? '');
+            break;
+          case 4:
+            compareResult = (a.verificationStatus ?? '').compareTo(
+              b.verificationStatus ?? '',
+            );
+            break;
+          case 5:
+            compareResult = (a.gender ?? '').compareTo(b.gender ?? '');
+            break;
+          case 6:
+            final dateA = DateTime.tryParse(a.birthDate ?? '') ?? DateTime(0);
+            final dateB = DateTime.tryParse(b.birthDate ?? '') ?? DateTime(0);
+            compareResult = dateA.compareTo(dateB);
+            break;
+          case 7:
+          default:
+            final dateA = DateTime.tryParse(a.createdAt ?? '') ?? DateTime(0);
+            final dateB = DateTime.tryParse(b.createdAt ?? '') ?? DateTime(0);
+            compareResult = dateA.compareTo(dateB);
+        }
+        return sortAscending ? compareResult : -compareResult;
       });
 
       emit(
@@ -156,16 +210,70 @@ class OnboardingQueueBloc
       final searchQuery = event.searchQuery ?? state.verifiedSearchQuery;
       final professionId = event.professionId ?? state.verifiedProfessionId;
 
-      final applicants = await getVerifiedApplicantsUseCase(
+      // Fetch from API, but still apply filtering locally because the backend
+      // may not support these query params yet.
+      var applicants = await getVerifiedApplicantsUseCase(
         searchQuery: searchQuery,
         professionId: professionId,
       );
 
-      // Default sort: Newest first (descending by created_at)
+      // Local search filter
+      if (searchQuery.isNotEmpty) {
+        final lowerQuery = searchQuery.toLowerCase();
+        applicants = applicants.where((applicant) {
+          return applicant.fullName.toLowerCase().contains(lowerQuery) ||
+              (applicant.phone ?? '').contains(lowerQuery) ||
+              (applicant.email ?? '').toLowerCase().contains(lowerQuery);
+        }).toList();
+      }
+
+      // Local profession filter
+      if (professionId != null && professionId.isNotEmpty) {
+        applicants = applicants.where((applicant) {
+          return applicant.professionalTag == professionId;
+        }).toList();
+      }
+
+      // Apply current sort settings (default: Registered date, newest first)
+      final sortColumnIndex = state.verifiedSortColumnIndex;
+      final sortAscending = state.verifiedSortAscending;
       applicants.sort((a, b) {
-        final dateA = DateTime.tryParse(a.createdAt ?? '') ?? DateTime(0);
-        final dateB = DateTime.tryParse(b.createdAt ?? '') ?? DateTime(0);
-        return dateB.compareTo(dateA);
+        int compareResult = 0;
+        switch (sortColumnIndex) {
+          case 0:
+            compareResult = (a.fullName).compareTo(b.fullName);
+            break;
+          case 1:
+            compareResult = (a.professionalTag ?? '').compareTo(
+              b.professionalTag ?? '',
+            );
+            break;
+          case 2:
+            compareResult = (a.phone ?? '').compareTo(b.phone ?? '');
+            break;
+          case 3:
+            compareResult = (a.email ?? '').compareTo(b.email ?? '');
+            break;
+          case 4:
+            compareResult = (a.verificationStatus ?? '').compareTo(
+              b.verificationStatus ?? '',
+            );
+            break;
+          case 5:
+            compareResult = (a.gender ?? '').compareTo(b.gender ?? '');
+            break;
+          case 6:
+            final dateA = DateTime.tryParse(a.birthDate ?? '') ?? DateTime(0);
+            final dateB = DateTime.tryParse(b.birthDate ?? '') ?? DateTime(0);
+            compareResult = dateA.compareTo(dateB);
+            break;
+          case 7:
+          default:
+            final dateA = DateTime.tryParse(a.createdAt ?? '') ?? DateTime(0);
+            final dateB = DateTime.tryParse(b.createdAt ?? '') ?? DateTime(0);
+            compareResult = dateA.compareTo(dateB);
+        }
+        return sortAscending ? compareResult : -compareResult;
       });
 
       emit(
