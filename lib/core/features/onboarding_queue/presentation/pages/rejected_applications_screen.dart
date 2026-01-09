@@ -3,47 +3,46 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/bloc/onboarding_queue_bloc.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/applicant_details_screen.dart';
-import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/under_review/widgets/under_review_filters.dart';
-import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/under_review/widgets/under_review_table.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/rejected/widgets/rejected_filters.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/rejected/widgets/rejected_table.dart';
 import 'package:konsulta_admin/core/service/dependency_injection/injection.dart';
 import 'package:konsulta_admin/core/widgets/layout/layout_container.dart';
 
-/// Under Review Screen - Displays applicants whose documents are under review
+/// Rejected Applications Screen - Displays rejected professionals
 ///
-/// This file has been refactored from 1,795 lines down to ~100 lines
-/// by extracting components into separate reusable files following
-/// SOLID principles and 2025 Flutter best practices
-class UnderReviewScreen extends StatelessWidget {
-  const UnderReviewScreen({super.key});
+/// This screen follows the same clean architecture pattern as Under Review screen
+/// Shows only rejected applicants with profession filter and sort capabilities
+class RejectedApplicationsScreen extends StatelessWidget {
+  const RejectedApplicationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<OnboardingQueueBloc>(),
-      child: const UnderReviewView(),
+      child: const RejectedApplicationsView(),
     );
   }
 }
 
-class UnderReviewView extends StatefulWidget {
-  const UnderReviewView({super.key});
+class RejectedApplicationsView extends StatefulWidget {
+  const RejectedApplicationsView({super.key});
 
   @override
-  State<UnderReviewView> createState() => _UnderReviewViewState();
+  State<RejectedApplicationsView> createState() => _RejectedApplicationsViewState();
 }
 
-class _UnderReviewViewState extends State<UnderReviewView> {
+class _RejectedApplicationsViewState extends State<RejectedApplicationsView> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Set active screen to Under Review
-    context.read<OnboardingQueueBloc>().add(SetActiveScreenEvent(ActiveScreen.underReview));
+    // Set active screen to Rejected
+    context.read<OnboardingQueueBloc>().add(SetActiveScreenEvent(ActiveScreen.rejected));
     // Fetch professional tags for dropdown
     context.read<OnboardingQueueBloc>().add(GetProfessionalTagsEvent());
-    // Trigger the event to fetch under review applicants
-    context.read<OnboardingQueueBloc>().add(GetUnderReviewApplicantsEvent());
+    // Trigger the event to fetch rejected applicants
+    context.read<OnboardingQueueBloc>().add(GetRejectedApplicantsEvent());
   }
 
   @override
@@ -78,7 +77,7 @@ class _UnderReviewViewState extends State<UnderReviewView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Under Review',
+                  'Rejected Applications',
                   style: GoogleFonts.inter(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -87,16 +86,16 @@ class _UnderReviewViewState extends State<UnderReviewView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Review the uploaded IDs to approve or reject applications.',
+                  'View all rejected professional applications.',
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     color: Colors.grey[600],
                   ),
                 ),
                 const SizedBox(height: 24),
-                UnderReviewFilters(searchController: _searchController),
+                RejectedFilters(searchController: _searchController),
                 const SizedBox(height: 24),
-                const Expanded(child: UnderReviewTable()),
+                const Expanded(child: RejectedTable()),
               ],
             ),
           );

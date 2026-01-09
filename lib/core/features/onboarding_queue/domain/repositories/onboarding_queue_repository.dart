@@ -14,6 +14,11 @@ abstract class OnboardingQueueRepository {
     String? searchQuery,
     String? professionId,
   });
+  Future<List<ApplicantModel>> getRejectedApplicants({
+    String? searchQuery,
+    String? professionId,
+    int? adminUserId,
+  });
   Future<bool> startReview(String applicantId);
   Future<List<String>> getProfessionalTags();
 }
