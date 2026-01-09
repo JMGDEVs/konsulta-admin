@@ -437,43 +437,91 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
                   DataCell(
                     Text(
                       applicant.fullName,
-                      style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
                     ),
                   ),
                   DataCell(
                     Text(
                       applicant.professionalTag ?? '---',
-                      style: GoogleFonts.inter(),
-                    ),
-                  ),
-                  DataCell(
-                    Text(applicant.phone ?? '---', style: GoogleFonts.inter()),
-                  ),
-                  DataCell(
-                    Text(applicant.email ?? '---', style: GoogleFonts.inter()),
-                  ),
-                  DataCell(
-                    Text(
-                      applicant.verificationStatus ?? 'Pending',
                       style: GoogleFonts.inter(
-                        color: Colors.orange,
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
                       ),
                     ),
                   ),
                   DataCell(
-                    Text(applicant.gender ?? '---', style: GoogleFonts.inter()),
+                    Text(
+                      applicant.phone ?? '---',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
+                  ),
+                  DataCell(
+                    Text(
+                      applicant.email ?? '---',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
+                  ),
+                  DataCell(
+                    Text(
+                      applicant.verificationStatus ?? 'Pending',
+
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                        color: Colors.orange,
+                      ),
+                    ),
+                  ),
+                  DataCell(
+                    Text(
+                      applicant.gender ?? '---',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
+                    ),
                   ),
                   DataCell(
                     Text(
                       _formatDate(applicant.birthDate),
-                      style: GoogleFonts.inter(),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
                     ),
                   ),
                   DataCell(
                     Text(
                       _formatDate(applicant.createdAt),
-                      style: GoogleFonts.inter(),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        letterSpacing: -0.32,
+                      ),
                     ),
                   ),
                   DataCell(
@@ -500,8 +548,10 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
                             Text(
                               'Handle',
                               style: GoogleFonts.inter(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                height: 1.3,
+                                letterSpacing: -0.28,
                                 color: Colors.black,
                               ),
                             ),
@@ -523,8 +573,10 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
     return Text(
       text,
       style: GoogleFonts.inter(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        height: 1.3, // 130% line height
+        letterSpacing: -0.32, // -2% of 16px
         color: Colors.black,
       ),
     );
