@@ -100,7 +100,7 @@ class UnderReviewFilters extends StatelessWidget {
                       (OnboardingQueueBloc bloc) {
                         final profId = bloc.state.underReviewProfessionId;
                         return (profId == null || profId == kAllProfessionsFilter)
-                            ? 'ALL'
+                            ? 'All'
                             : profId;
                       },
                     ),
@@ -122,12 +122,12 @@ class UnderReviewFilters extends StatelessWidget {
             ),
             itemBuilder: (context) {
               final state = context.read<OnboardingQueueBloc>().state;
-              final professionOptions = ['ALL', ...state.professionalTags];
+              final professionOptions = ['All', ...state.professionalTags];
 
               return professionOptions
                   .map(
                     (role) => PopupMenuItem<String>(
-                      value: role == 'ALL' ? kAllProfessionsFilter : role,
+                      value: role == 'All' ? kAllProfessionsFilter : role,
                       height: 48,
                       child: Text(
                         role,
