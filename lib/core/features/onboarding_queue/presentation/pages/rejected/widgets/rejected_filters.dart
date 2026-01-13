@@ -100,7 +100,7 @@ class RejectedFilters extends StatelessWidget {
                       (OnboardingQueueBloc bloc) {
                         final profId = bloc.state.rejectedProfessionId;
                         return (profId == null || profId == kAllProfessionsFilter)
-                            ? 'ALL'
+                            ? 'All'
                             : profId;
                       },
                     ),
@@ -122,12 +122,12 @@ class RejectedFilters extends StatelessWidget {
             ),
             itemBuilder: (context) {
               final state = context.read<OnboardingQueueBloc>().state;
-              final professionOptions = ['ALL', ...state.professionalTags];
+              final professionOptions = ['All', ...state.professionalTags];
 
               return professionOptions
                   .map(
                     (role) => PopupMenuItem<String>(
-                      value: role == 'ALL' ? kAllProfessionsFilter : role,
+                      value: role == 'All' ? kAllProfessionsFilter : role,
                       height: 48,
                       child: Text(
                         role,
