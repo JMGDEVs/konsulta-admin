@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:konsulta_admin/core/features/dashboard/dashboard_layout.dart';
 import 'package:konsulta_admin/core/features/home_controller/hover_item.dart';
 import 'package:konsulta_admin/core/features/home_controller/pages.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/pending_applications_screen.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/rejected_applications_screen.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/under_review_screen.dart';
+import 'package:konsulta_admin/core/features/onboarding_queue/presentation/pages/verified_applications_screen.dart';
 import 'package:konsulta_admin/core/features/router/app_router.dart';
 import 'package:konsulta_admin/core/theme/custom_colors.dart';
 
@@ -105,12 +110,35 @@ class _HomeStateControllerState extends State<HomeStateController>
                 ),
               ),
               backgroundColor: AppColors.darkgreyColor,
-              body: IndexedStack(index: selectedIndex, children: pages),
+              body: _buildCurrentScreen(selectedIndex),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildCurrentScreen(int index) {
+    switch (index) {
+      case 0:
+        return const HomeLayout();
+      case 1:
+        return const Scaffold(
+          body: Center(
+            child: Text('Onboarding Queue - Select a specific screen'),
+          ),
+        );
+      case 2:
+        return const PendingApplicationsScreen();
+      case 3:
+        return const UnderReviewScreen();
+      case 4:
+        return const VerifiedApplicationsScreen();
+      case 5:
+        return const RejectedApplicationsScreen();
+      default:
+        return const HomeLayout();
+    }
   }
 
   List<Widget> _buildMenuItems() {
