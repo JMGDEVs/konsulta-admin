@@ -328,15 +328,27 @@ class OnboardingQueueBloc
       final searchQuery = event.searchQuery ?? state.rejectedSearchQuery;
       final professionId = event.professionId ?? state.rejectedProfessionId;
 
+      // Retrieve admin_user_id from secure storage
+      final adminUserIdStr = await _secureStorage.read(key: 'admin_user_id');
+      final adminUserId = adminUserIdStr != null ? int.tryParse(adminUserIdStr) : null;
+
+      print('🔍 DEBUG - Rejected Applications API Call Parameters:');
+      print('   - admin_user_id: $adminUserId');
+      print('   - professionalTag: ${professionId != null && professionId.isNotEmpty ? professionId : "(not included - showing all)"}');
+      print('   - search: ${searchQuery.isNotEmpty ? searchQuery : "(not included - no search)"}');
+
       // ALWAYS try API first
       List<ApplicantModel> applicants = await getRejectedApplicantsUseCase(
         searchQuery: searchQuery,
         professionId: professionId,
+        adminUserId: adminUserId,
       );
 
       // Fallback to mock data only if API returns empty
       if (applicants.isEmpty && USE_MOCK_REJECTED_DATA) {
         print('⚠️  API returned empty data, using mock data as fallback');
+        print('   - Check if admin_user_id is correctly set');
+        print('   - Verify backend has data for this admin user');
         applicants = List.from(mockRejectedApplicants);
 
         // Apply search filter to mock data
@@ -359,8 +371,13 @@ class OnboardingQueueBloc
         print('📋 Using ${applicants.length} applicants from mock data');
       } else if (applicants.isNotEmpty) {
         print('✅ Using real API data (${applicants.length} applicants)');
+        print('   - admin_user_id: $adminUserId');
+        print('   - professionalTag filter: ${professionId != null && professionId.isNotEmpty ? professionId : "All"}');
+        print('   - search query: ${searchQuery.isNotEmpty ? searchQuery : "none"}');
       } else {
-        print('ℹ️  No applicants found (API returned empty, mock data disabled)');
+        print('ℹ️  No applicants found');
+        print('   - admin_user_id sent: $adminUserId');
+        print('   - This may be correct (no data) or admin_user_id might be invalid');
       }
 
       // Default sort: Newest first (descending by created_at)
