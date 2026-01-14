@@ -37,13 +37,10 @@ class _PendingApplicationsViewState extends State<PendingApplicationsView> {
   @override
   void initState() {
     super.initState();
-    // Set active screen to Pending
     context.read<OnboardingQueueBloc>().add(
       SetActiveScreenEvent(ActiveScreen.pending),
     );
-    // Trigger the event to fetch pending applicants
     context.read<OnboardingQueueBloc>().add(GetPendingApplicantsEvent());
-    // Fetch professional tags from API
     context.read<OnboardingQueueBloc>().add(GetProfessionalTagsEvent());
   }
 

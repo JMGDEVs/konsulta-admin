@@ -11,44 +11,8 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
 
   OnboardingQueueRepositoryImpl(this._api);
 
-  // Logs API call details for debugging
-  void _logApiCall(String endpoint, APIResult result, {Map<String, dynamic>? queryParams}) {
-    debugPrint('');
-    debugPrint('┌─────────────────────────────────────────');
-    debugPrint('│ [API CALL] $endpoint');
-    debugPrint('├─────────────────────────────────────────');
-
-    if (queryParams != null && queryParams.isNotEmpty) {
-      debugPrint('│ [QUERY PARAMETERS]:');
-      queryParams.forEach((key, value) {
-        debugPrint('│    • $key: $value (${value.runtimeType})');
-      });
-    } else {
-      debugPrint('│ [QUERY PARAMETERS]: (none)');
-    }
-
-    debugPrint('├─────────────────────────────────────────');
-    debugPrint('│ [RESPONSE]:');
-    debugPrint('│    • Status Code: ${result.statusCode}');
-    debugPrint('│    • Is Success: ${result.isSuccess}');
-
-    if (result.isSuccess) {
-      debugPrint('│    • Body Length: ${result.body?.toString().length ?? 0} chars');
-      if (result.data != null) {
-        final data = result.data;
-        if (data is Map && data.containsKey('data')) {
-          final dataList = data['data'];
-          if (dataList is List) {
-            debugPrint('│    • Records Count: ${dataList.length}');
-          }
-        }
-      }
-    } else {
-      debugPrint('│    • [ERROR]: ${result.errorMessage}');
-    }
-
-    debugPrint('└─────────────────────────────────────────');
-    debugPrint('');
+  void _logApiCall(String endpoint, APIResult result) {
+    debugPrint('[API] $endpoint - ${result.isSuccess ? 'SUCCESS' : 'FAILED'} (${result.statusCode})');
   }
 
   @override
@@ -114,7 +78,7 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
       queryParams: queryParams,
     );
 
-    _logApiCall('Get Under Review Applicants API', result, queryParams: queryParams);
+    _logApiCall('Get Under Review Applicants API', result);
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);
@@ -205,7 +169,7 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
       queryParams: queryParams,
     );
 
-    _logApiCall('Get Rejected Applicants API', result, queryParams: queryParams);
+    _logApiCall('Get Rejected Applicants API', result);
 
     if (!result.isSuccess) {
       throw Exception(result.errorMessage);

@@ -38,11 +38,8 @@ class _UnderReviewViewState extends State<UnderReviewView> {
   @override
   void initState() {
     super.initState();
-    // Set active screen to Under Review
     context.read<OnboardingQueueBloc>().add(SetActiveScreenEvent(ActiveScreen.underReview));
-    // Fetch professional tags for dropdown
     context.read<OnboardingQueueBloc>().add(GetProfessionalTagsEvent());
-    // Trigger the event to fetch under review applicants
     context.read<OnboardingQueueBloc>().add(GetUnderReviewApplicantsEvent());
   }
 

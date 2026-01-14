@@ -32,7 +32,7 @@ const double kReturnButtonHeight = 50;
 // Colors
 const Color kBackgroundColor = Color(0xFFF5F5F5);
 const Color kCardShadowColor = Color(0x1A000000); // #0000001A
-const Color kFileShadowColor = Color(0x40000000); // #00000040
+const Color kFileShadowColor = Color(0x14000000); // #00000014 - Subtle shadow for Figma design
 const Color kGreenButton = Color(0xFF0BC43C);
 const Color kRedButton = Color(0xFFEA4335);
 const Color kAmberColor = Color(0xFFFFC107);

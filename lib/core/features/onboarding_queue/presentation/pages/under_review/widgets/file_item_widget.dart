@@ -26,21 +26,20 @@ class FileItemWidget extends StatelessWidget {
         color: Colors.white,
         border: Border.all(
           color: kBorderGray,
-          width: 2,
+          width: 1,
         ),
         borderRadius: BorderRadius.circular(kFileItemBorderRadius),
         boxShadow: const [
           BoxShadow(
             color: kFileShadowColor,
-            offset: Offset(0, 4),
-            blurRadius: 25,
+            offset: Offset(0, 1),
+            blurRadius: 6,
             spreadRadius: 0,
           ),
         ],
       ),
       child: Row(
         children: [
-          // File icon
           SizedBox(
             width: kFileItemIconSize,
             height: kFileItemIconSize,
@@ -52,8 +51,6 @@ class FileItemWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 15),
-
-          // Filename and size
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,8 +81,6 @@ class FileItemWidget extends StatelessWidget {
               ],
             ),
           ),
-
-          // View button
           InkWell(
             onTap: onView,
             child: Container(

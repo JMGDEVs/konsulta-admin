@@ -34,13 +34,10 @@ class _VerifiedApplicationsViewState extends State<VerifiedApplicationsView> {
   @override
   void initState() {
     super.initState();
-    // Set active screen to Verified
     context.read<OnboardingQueueBloc>().add(
       SetActiveScreenEvent(ActiveScreen.verified),
     );
-    // Trigger the event to fetch verified applicants
     context.read<OnboardingQueueBloc>().add(GetVerifiedApplicantsEvent());
-    // Fetch professional tags from API
     context.read<OnboardingQueueBloc>().add(GetProfessionalTagsEvent());
   }
 
