@@ -15,20 +15,20 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
   void _logApiCall(String endpoint, APIResult result, {Map<String, dynamic>? queryParams}) {
     debugPrint('');
     debugPrint('┌─────────────────────────────────────────');
-    debugPrint('│ 📡 API CALL: $endpoint');
+    debugPrint('│ [API CALL] $endpoint');
     debugPrint('├─────────────────────────────────────────');
 
     if (queryParams != null && queryParams.isNotEmpty) {
-      debugPrint('│ 🔹 QUERY PARAMETERS:');
+      debugPrint('│ [QUERY PARAMETERS]:');
       queryParams.forEach((key, value) {
         debugPrint('│    • $key: $value (${value.runtimeType})');
       });
     } else {
-      debugPrint('│ 🔹 QUERY PARAMETERS: (none)');
+      debugPrint('│ [QUERY PARAMETERS]: (none)');
     }
 
     debugPrint('├─────────────────────────────────────────');
-    debugPrint('│ 📥 RESPONSE:');
+    debugPrint('│ [RESPONSE]:');
     debugPrint('│    • Status Code: ${result.statusCode}');
     debugPrint('│    • Is Success: ${result.isSuccess}');
 
@@ -44,7 +44,7 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
         }
       }
     } else {
-      debugPrint('│    • ❌ Error: ${result.errorMessage}');
+      debugPrint('│    • [ERROR]: ${result.errorMessage}');
     }
 
     debugPrint('└─────────────────────────────────────────');
