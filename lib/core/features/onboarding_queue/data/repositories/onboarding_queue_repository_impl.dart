@@ -13,13 +13,42 @@ class OnboardingQueueRepositoryImpl implements OnboardingQueueRepository {
 
   // Logs API call details for debugging
   void _logApiCall(String endpoint, APIResult result, {Map<String, dynamic>? queryParams}) {
-    debugPrint('=== $endpoint ===');
-    if (queryParams != null) debugPrint('Query Params: $queryParams');
-    debugPrint('Status Code: ${result.statusCode}');
-    debugPrint('Response Body: ${result.body}');
-    debugPrint('Is Success: ${result.isSuccess}');
-    if (!result.isSuccess) debugPrint('Error Message: ${result.errorMessage}');
-    debugPrint('${'=' * (endpoint.length + 8)}');
+    debugPrint('');
+    debugPrint('┌─────────────────────────────────────────');
+    debugPrint('│ 📡 API CALL: $endpoint');
+    debugPrint('├─────────────────────────────────────────');
+
+    if (queryParams != null && queryParams.isNotEmpty) {
+      debugPrint('│ 🔹 QUERY PARAMETERS:');
+      queryParams.forEach((key, value) {
+        debugPrint('│    • $key: $value (${value.runtimeType})');
+      });
+    } else {
+      debugPrint('│ 🔹 QUERY PARAMETERS: (none)');
+    }
+
+    debugPrint('├─────────────────────────────────────────');
+    debugPrint('│ 📥 RESPONSE:');
+    debugPrint('│    • Status Code: ${result.statusCode}');
+    debugPrint('│    • Is Success: ${result.isSuccess}');
+
+    if (result.isSuccess) {
+      debugPrint('│    • Body Length: ${result.body?.toString().length ?? 0} chars');
+      if (result.data != null) {
+        final data = result.data;
+        if (data is Map && data.containsKey('data')) {
+          final dataList = data['data'];
+          if (dataList is List) {
+            debugPrint('│    • Records Count: ${dataList.length}');
+          }
+        }
+      }
+    } else {
+      debugPrint('│    • ❌ Error: ${result.errorMessage}');
+    }
+
+    debugPrint('└─────────────────────────────────────────');
+    debugPrint('');
   }
 
   @override

@@ -24,6 +24,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if(result.success == true) {
         emit(SuccessLogin());
         await secureStorage.write(key: 'token', value: result.token);
+
+        // Store admin_user_id for API calls
+        if (result.user?.adminUserId != null) {
+          await secureStorage.write(
+            key: 'admin_user_id',
+            value: result.user!.adminUserId.toString(),
+          );
+        }
+
         await AppRouter.checkAuthState();
         
       } else {

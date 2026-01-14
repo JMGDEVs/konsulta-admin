@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/data/models/applicant_model.dart';
 import 'package:konsulta_admin/core/features/onboarding_queue/data/models/mock_applicants.dart';
@@ -21,6 +22,8 @@ class OnboardingQueueBloc
   final GetRejectedApplicantsUseCase getRejectedApplicantsUseCase;
   final StartReviewUseCase startReviewUseCase;
   final GetProfessionalTagsUseCase getProfessionalTagsUseCase;
+
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   OnboardingQueueBloc(
     this.getPendingApplicantsUseCase,
@@ -150,15 +153,27 @@ class OnboardingQueueBloc
       final searchQuery = event.searchQuery ?? state.underReviewSearchQuery;
       final professionId = event.professionId ?? state.underReviewProfessionId;
 
+      // Retrieve admin_user_id from secure storage
+      final adminUserIdStr = await _secureStorage.read(key: 'admin_user_id');
+      final adminUserId = adminUserIdStr != null ? int.tryParse(adminUserIdStr) : null;
+
+      print('🔍 DEBUG - Under Review API Call Parameters:');
+      print('   - admin_user_id: $adminUserId');
+      print('   - professionalTag: ${professionId != null && professionId.isNotEmpty ? professionId : "(not included - showing all)"}');
+      print('   - search: ${searchQuery.isNotEmpty ? searchQuery : "(not included - no search)"}');
+
       // ALWAYS try API first
       List<ApplicantModel> applicants = await getUnderReviewApplicantsUseCase(
         searchQuery: searchQuery,
         professionId: professionId,
+        adminUserId: adminUserId,
       );
 
       // Fallback to mock data only if API returns empty
       if (applicants.isEmpty && USE_MOCK_UNDER_REVIEW_DATA) {
         print('⚠️  API returned empty data, using mock data as fallback');
+        print('   - Check if admin_user_id is correctly set');
+        print('   - Verify backend has data for this admin user');
         applicants = List.from(mockUnderReviewApplicants);
 
         // Apply search filter to mock data
@@ -181,8 +196,13 @@ class OnboardingQueueBloc
         print('📋 Using ${applicants.length} applicants from mock data');
       } else if (applicants.isNotEmpty) {
         print('✅ Using real API data (${applicants.length} applicants)');
+        print('   - admin_user_id: $adminUserId');
+        print('   - professionalTag filter: ${professionId != null && professionId.isNotEmpty ? professionId : "All"}');
+        print('   - search query: ${searchQuery.isNotEmpty ? searchQuery : "none"}');
       } else {
-        print('ℹ️  No applicants found (API returned empty, mock data disabled)');
+        print('ℹ️  No applicants found');
+        print('   - admin_user_id sent: $adminUserId');
+        print('   - This may be correct (no data) or admin_user_id might be invalid');
       }
 
       // Default sort: Newest first (descending by created_at)
