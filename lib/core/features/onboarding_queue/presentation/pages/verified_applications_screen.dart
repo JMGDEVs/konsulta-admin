@@ -138,7 +138,7 @@ class _VerifiedApplicationsViewState extends State<VerifiedApplicationsView> {
         SizedBox(
           width: 254,
           height: 45,
-          child: PopupMenuButton<String>(
+          child: PopupMenuButton<String?>(
             offset: const Offset(0, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -162,7 +162,7 @@ class _VerifiedApplicationsViewState extends State<VerifiedApplicationsView> {
                   Text(
                     context.select(
                       (OnboardingQueueBloc bloc) =>
-                          bloc.state.verifiedProfessionId ?? 'Profession',
+                          bloc.state.verifiedProfessionId ?? 'All',
                     ),
                     style: GoogleFonts.inter(
                       color: const Color(0xFF000000),
@@ -182,24 +182,45 @@ class _VerifiedApplicationsViewState extends State<VerifiedApplicationsView> {
             ),
             itemBuilder: (context) {
               final state = context.read<OnboardingQueueBloc>().state;
-              return state.professionalTags
-                  .map(
-                    (tag) => PopupMenuItem<String>(
-                      value: tag,
-                      height: 48,
-                      child: Text(
-                        tag,
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          height: 1.3,
-                          letterSpacing: -0.32,
-                          color: Colors.black,
+              // Add "All" as the first option
+              final items = <PopupMenuItem<String?>>[
+                PopupMenuItem<String?>(
+                  value: null, // null represents "All"
+                  height: 48,
+                  child: Text(
+                    'All',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      height: 1.3,
+                      letterSpacing: -0.32,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ];
+              // Add all professional tags
+              items.addAll(
+                state.professionalTags
+                    .map(
+                      (tag) => PopupMenuItem<String?>(
+                        value: tag,
+                        height: 48,
+                        child: Text(
+                          tag,
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            height: 1.3,
+                            letterSpacing: -0.32,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                  .toList();
+                    )
+                    .toList(),
+              );
+              return items;
             },
             onSelected: (value) {
               context.read<OnboardingQueueBloc>().add(
